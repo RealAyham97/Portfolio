@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { matchesFilter } from "@/components/work/filter-bar";
+import { describe, expect, it } from "vitest";
 
 describe("matchesFilter", () => {
   it("All passes everything", () => {

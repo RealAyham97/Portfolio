@@ -1,8 +1,8 @@
 "use client";
+import { cn } from "@/lib/cn";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { cn } from "@/lib/cn";
 
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -25,10 +25,18 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={onToggle}
       className={cn(
         "inline-flex h-9 w-9 items-center justify-center rounded-full border text-text-muted transition hover:text-text",
-        className
+        className,
       )}
     >
-      {mounted ? (resolvedTheme === "dark" ? <Sun size={16} /> : <Moon size={16} />) : <Moon size={16} />}
+      {mounted ? (
+        resolvedTheme === "dark" ? (
+          <Sun size={16} />
+        ) : (
+          <Moon size={16} />
+        )
+      ) : (
+        <Moon size={16} />
+      )}
     </button>
   );
 }

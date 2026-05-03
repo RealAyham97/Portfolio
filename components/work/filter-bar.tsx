@@ -16,7 +16,9 @@ export function FilterBar({ value, onChange }: { value: Filter; onChange: (v: Fi
             onClick={() => onChange(f)}
             className={cn(
               "rounded-full border border-border px-3 py-1 font-mono text-xs uppercase tracking-wider transition",
-              value === f ? "bg-accent text-accent-fg border-accent" : "text-text-muted hover:text-text"
+              value === f
+                ? "bg-accent text-accent-fg border-accent"
+                : "text-text-muted hover:text-text",
             )}
           >
             {f}

@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { formatAmmanTime } from "@/lib/format";
+import { describe, expect, it } from "vitest";
 
 describe("formatAmmanTime", () => {
   it("returns HH:MM in 24h Amman time", () => {

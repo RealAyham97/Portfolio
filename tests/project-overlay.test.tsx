@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
 import { ProjectOverlay } from "@/components/work/project-overlay";
 import type { Project } from "@/content/projects";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 const project: Project = {
   slug: "x",

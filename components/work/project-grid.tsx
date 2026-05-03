@@ -1,7 +1,7 @@
 "use client";
+import type { Project } from "@/content/projects";
 import { AnimatePresence, LayoutGroup } from "motion/react";
 import { useMemo, useState } from "react";
-import type { Project } from "@/content/projects";
 import { type Filter, FilterBar, matchesFilter } from "./filter-bar";
 import { ProjectCard } from "./project-card";
 import { ProjectOverlay } from "./project-overlay";
@@ -9,7 +9,10 @@ import { ProjectOverlay } from "./project-overlay";
 export function ProjectGrid({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<Filter>("All");
   const [open, setOpen] = useState<Project | null>(null);
-  const visible = useMemo(() => projects.filter((p) => matchesFilter(p.stack, filter)), [projects, filter]);
+  const visible = useMemo(
+    () => projects.filter((p) => matchesFilter(p.stack, filter)),
+    [projects, filter],
+  );
 
   return (
     <LayoutGroup>
@@ -23,7 +26,9 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
           ))}
         </AnimatePresence>
       </ul>
-      <AnimatePresence>{open && <ProjectOverlay project={open} onClose={() => setOpen(null)} />}</AnimatePresence>
+      <AnimatePresence>
+        {open && <ProjectOverlay project={open} onClose={() => setOpen(null)} />}
+      </AnimatePresence>
     </LayoutGroup>
   );
 }

@@ -1,6 +1,6 @@
+import { LiveLocalTime } from "@/components/hero/live-local-time";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { LiveLocalTime } from "@/components/hero/live-local-time";
 
 describe("LiveLocalTime", () => {
   it("renders the SSR initial value before hydration update", () => {

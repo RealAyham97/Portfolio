@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { Project } from "@/content/projects";
+import Image from "next/image";
 import { Reveal } from "../reveal";
 
 export function FeaturedProject({ project }: { project: Project }) {
@@ -9,13 +9,19 @@ export function FeaturedProject({ project }: { project: Project }) {
         <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
           Featured · {project.client ?? "Personal"}
         </div>
-        <h3 className="font-display italic text-text" style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}>
+        <h3
+          className="font-display italic text-text"
+          style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}
+        >
           {project.title}
         </h3>
         <p className="text-text-muted leading-relaxed">{project.description}</p>
         <ul className="flex flex-wrap gap-2">
           {project.stack.map((s) => (
-            <li key={s} className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted">
+            <li
+              key={s}
+              className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
+            >
               {s}
             </li>
           ))}
@@ -33,9 +39,17 @@ export function FeaturedProject({ project }: { project: Project }) {
       </div>
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface-1">
         {project.image ? (
-          <Image src={project.image} alt={project.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 600px"
+          />
         ) : (
-          <div className="flex h-full items-center justify-center font-mono text-xs text-text-muted">screenshot pending</div>
+          <div className="flex h-full items-center justify-center font-mono text-xs text-text-muted">
+            screenshot pending
+          </div>
         )}
       </div>
     </Reveal>

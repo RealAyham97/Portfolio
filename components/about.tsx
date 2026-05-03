@@ -1,11 +1,14 @@
-import { Reveal } from "./reveal";
 import { about } from "@/content/about";
+import { Reveal } from "./reveal";
 
 export function About() {
   return (
     <section id="about" className="mx-auto max-w-6xl px-6 py-24 md:py-32">
       <Reveal>
-        <h2 className="font-display italic text-text" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
+        <h2
+          className="font-display italic text-text"
+          style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+        >
           About
         </h2>
       </Reveal>

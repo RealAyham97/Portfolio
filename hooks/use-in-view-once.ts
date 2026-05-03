@@ -18,7 +18,7 @@ export function useInViewOnce<T extends Element>(rootMargin = "0px 0px -10% 0px"
           }
         }
       },
-      { rootMargin, threshold: 0.1 }
+      { rootMargin, threshold: 0.1 },
     );
     obs.observe(el);
     return () => obs.disconnect();

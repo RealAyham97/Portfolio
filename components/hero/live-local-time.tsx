@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
 import { formatAmmanTime } from "@/lib/format";
+import { useEffect, useState } from "react";
 
 export function LiveLocalTime({ initial }: { initial: string }) {
   const [now, setNow] = useState(initial);
@@ -9,5 +9,9 @@ export function LiveLocalTime({ initial }: { initial: string }) {
     const id = setInterval(() => setNow(formatAmmanTime()), 60_000);
     return () => clearInterval(id);
   }, []);
-  return <time dateTime={now} aria-live="off">{now}</time>;
+  return (
+    <time dateTime={now} aria-live="off">
+      {now}
+    </time>
+  );
 }

@@ -1,12 +1,15 @@
-import { Reveal } from "./reveal";
-import { KpiTile } from "./kpi-tile";
 import { numbers, numbersCaption } from "@/content/numbers";
+import { KpiTile } from "./kpi-tile";
+import { Reveal } from "./reveal";
 
 export function Numbers() {
   return (
     <section id="numbers" className="mx-auto max-w-6xl px-6 py-24 md:py-32">
       <Reveal>
-        <h2 className="font-display italic text-text" style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}>
+        <h2
+          className="font-display italic text-text"
+          style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+        >
           Numbers
         </h2>
       </Reveal>
@@ -16,7 +19,9 @@ export function Numbers() {
         ))}
       </Reveal>
       <Reveal>
-        <p className="mt-8 font-mono text-xs uppercase tracking-wider text-text-muted">{numbersCaption}</p>
+        <p className="mt-8 font-mono text-xs uppercase tracking-wider text-text-muted">
+          {numbersCaption}
+        </p>
       </Reveal>
     </section>
   );

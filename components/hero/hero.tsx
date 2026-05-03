@@ -1,6 +1,6 @@
-import { ArrowDownToLine, Mail } from "lucide-react";
 import { profile } from "@/content/profile";
 import { formatAmmanTime } from "@/lib/format";
+import { ArrowDownToLine, Mail } from "lucide-react";
 import { LiveLocalTime } from "./live-local-time";
 import { SqlChartSignature } from "./sql-chart-signature";
 

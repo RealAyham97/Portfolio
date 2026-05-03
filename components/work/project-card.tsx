@@ -1,7 +1,7 @@
 "use client";
+import type { Project } from "@/content/projects";
 import { motion } from "motion/react";
 import Image from "next/image";
-import type { Project } from "@/content/projects";
 
 const STATUS_LABEL: Record<Project["status"], string> = {
   shipped: "Shipped",
@@ -9,7 +9,10 @@ const STATUS_LABEL: Record<Project["status"], string> = {
   "in-progress": "In progress",
 };
 
-export function ProjectCard({ project, onOpen }: { project: Project; onOpen: (p: Project) => void }) {
+export function ProjectCard({
+  project,
+  onOpen,
+}: { project: Project; onOpen: (p: Project) => void }) {
   return (
     <motion.button
       type="button"
@@ -18,9 +21,18 @@ export function ProjectCard({ project, onOpen }: { project: Project; onOpen: (p:
       onClick={() => onOpen(project)}
       className="group relative overflow-hidden rounded-xl border border-border bg-surface-1 text-left transition hover:border-text-muted"
     >
-      <motion.div layoutId={`project-${project.slug}-image`} className="relative aspect-[16/10] w-full bg-surface-2">
+      <motion.div
+        layoutId={`project-${project.slug}-image`}
+        className="relative aspect-[16/10] w-full bg-surface-2"
+      >
         {project.image ? (
-          <Image src={project.image} alt={project.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 400px" />
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
         ) : null}
       </motion.div>
       <div className="space-y-2 p-5">

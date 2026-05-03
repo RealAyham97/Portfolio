@@ -1,7 +1,7 @@
 "use client";
+import { useInViewOnce } from "@/hooks/use-in-view-once";
 import { animate, useMotionValue } from "motion/react";
 import { useEffect, useState } from "react";
-import { useInViewOnce } from "@/hooks/use-in-view-once";
 
 type Props = { value: number; prefix?: string; suffix?: string; label: string };
 
