@@ -1,3 +1,7 @@
-.claude/
+node_modules
+.next
+.env*
 .DS_Store
-Thumbs.db
+.vercel
+coverage
+*.tsbuildinfo
