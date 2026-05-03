@@ -17,10 +17,10 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
   return (
     <LayoutGroup>
       <FilterBar value={filter} onChange={setFilter} />
-      <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-8 flex flex-wrap justify-center gap-6">
         <AnimatePresence mode="popLayout">
           {visible.map((p) => (
-            <li key={p.slug}>
+            <li key={p.slug} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
               <ProjectCard project={p} onOpen={setOpen} />
             </li>
           ))}

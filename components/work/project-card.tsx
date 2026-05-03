@@ -7,6 +7,7 @@ const STATUS_LABEL: Record<Project["status"], string> = {
   shipped: "Shipped",
   deployed: "Deployed",
   "in-progress": "In progress",
+  "early-stage": "Early stage",
 };
 
 export function ProjectCard({
@@ -30,7 +31,7 @@ export function ProjectCard({
             src={project.image}
             alt={project.title}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="(max-width: 768px) 100vw, 400px"
           />
         ) : null}

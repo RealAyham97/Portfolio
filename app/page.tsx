@@ -2,7 +2,6 @@ import { About } from "@/components/about";
 import { Contact } from "@/components/contact";
 import { Hero } from "@/components/hero/hero";
 import { Numbers } from "@/components/numbers";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { Stack } from "@/components/stack";
 import { SelectedWork } from "@/components/work/selected-work";
@@ -19,7 +18,6 @@ export default function Home() {
         <Numbers />
         <Contact />
       </main>
-      <SiteFooter />
     </>
   );
 }

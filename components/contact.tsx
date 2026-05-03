@@ -1,24 +1,10 @@
-"use client";
 import { profile } from "@/content/profile";
-import { Check, Copy, Linkedin, Mail, Phone } from "lucide-react";
-import { useState } from "react";
+import { Linkedin, Mail, Phone } from "lucide-react";
 import { Reveal } from "./reveal";
 
 export function Contact() {
-  const [copied, setCopied] = useState(false);
-
-  async function copyEmail() {
-    try {
-      await navigator.clipboard.writeText(profile.email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard blocked; ignore */
-    }
-  }
-
   return (
-    <section id="contact" className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+    <section id="contact" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
         <h2
           className="font-display italic text-text"
@@ -27,24 +13,7 @@ export function Contact() {
           Contact
         </h2>
       </Reveal>
-      <Reveal className="mt-10 space-y-8">
-        <div className="flex flex-wrap items-center gap-3">
-          <a
-            href={`mailto:${profile.email}`}
-            className="font-display italic text-text hover:text-accent"
-            style={{ fontSize: "clamp(2rem, 6vw, 4rem)" }}
-          >
-            {profile.email}
-          </a>
-          <button
-            type="button"
-            onClick={copyEmail}
-            aria-label="Copy email address"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-text-muted transition hover:text-text"
-          >
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-          </button>
-        </div>
+      <Reveal className="mt-10">
         <ul className="grid gap-4 font-mono text-sm text-text-muted sm:grid-cols-3">
           <li className="flex items-center gap-2">
             <Mail size={14} />

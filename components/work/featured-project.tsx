@@ -37,13 +37,13 @@ export function FeaturedProject({ project }: { project: Project }) {
           </dl>
         )}
       </div>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface-1">
+      <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-border bg-surface-2">
         {project.image ? (
           <Image
             src={project.image}
             alt={project.title}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="(max-width: 768px) 100vw, 600px"
           />
         ) : (

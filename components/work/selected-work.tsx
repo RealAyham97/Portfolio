@@ -8,7 +8,7 @@ export function SelectedWork() {
   const rest = projects.filter((p) => !p.featured);
 
   return (
-    <section id="work" className="mx-auto max-w-6xl px-6 py-24 md:py-32 space-y-16">
+    <section id="work" className="mx-auto max-w-6xl px-6 py-12 md:py-16 space-y-10">
       <Reveal>
         <h2
           className="font-display italic text-text"

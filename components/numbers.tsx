@@ -1,10 +1,10 @@
-import { numbers, numbersCaption } from "@/content/numbers";
+import { numbers } from "@/content/numbers";
 import { KpiTile } from "./kpi-tile";
 import { Reveal } from "./reveal";
 
 export function Numbers() {
   return (
-    <section id="numbers" className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+    <section id="numbers" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
         <h2
           className="font-display italic text-text"
@@ -17,11 +17,6 @@ export function Numbers() {
         {numbers.map((n) => (
           <KpiTile key={n.label} {...n} />
         ))}
-      </Reveal>
-      <Reveal>
-        <p className="mt-8 font-mono text-xs uppercase tracking-wider text-text-muted">
-          {numbersCaption}
-        </p>
       </Reveal>
     </section>
   );

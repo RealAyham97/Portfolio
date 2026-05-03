@@ -1,9 +1,9 @@
 export const about = {
   paragraphs: [
-    "I'm a data analyst with a passion for transforming complex datasets into clear, actionable insights that drive business performance.",
-    "My career spans digital growth at Shahid/MBC, omnichannel campaigns at Gargash Enterprises, crew performance evaluation at JSIT/Republic Airways, and compliance controls at Deloitte — a versatile blend of analytical expertise and strategic thinking.",
+    "I'm an analyst turned entrepreneur. Six years working across aviation, consulting, media, and enterprise tech gave me a sharp eye for where businesses bleed value, and I now build companies to capture it.",
+    "Ecompanio, Padel Score, and Blue Moon are active bets: a data-backed ATS platform, an IoT scoring system for padel courts, and a cloud kitchen. The data skills still run everything, just pointed at my own P&L now.",
   ],
-  now: "Building dashboards and predictive models that turn operational telemetry into decisions.",
+  now: "Founding, designing, and shipping across three ventures while keeping the data sharp.",
   past: ["Gargash Enterprises", "JSIT / Republic Airways", "Deloitte", "Shahid / MBC"],
   industries: ["Digital Growth", "Aviation Operations", "Big Four Consulting", "Media Technology"],
 };

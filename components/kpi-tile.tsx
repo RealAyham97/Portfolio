@@ -12,11 +12,6 @@ export function KpiTile({ value, prefix = "", suffix = "", label }: Props) {
 
   useEffect(() => {
     if (!inView) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setDisplay(value);
-      return;
-    }
     const controls = animate(mv, value, {
       duration: 1.2,
       ease: [0.16, 1, 0.3, 1],

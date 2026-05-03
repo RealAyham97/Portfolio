@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/cn";
 
-export const FILTERS = ["All", "SQL", "Python", "Power BI", "Foundry", "Figma"] as const;
+export const FILTERS = ["All", "SQL", "Python", "Power BI", "Figma"] as const;
 export type Filter = (typeof FILTERS)[number];
 
 export function FilterBar({ value, onChange }: { value: Filter; onChange: (v: Filter) => void }) {

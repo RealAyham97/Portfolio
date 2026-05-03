@@ -1,8 +1,9 @@
 import { profile } from "@/content/profile";
 import { formatAmmanTime } from "@/lib/format";
-import { ArrowDownToLine, Mail } from "lucide-react";
+import { ArrowDownToLine } from "lucide-react";
+import { HeroEmailButton } from "./email-button";
+import { LiveQueryCard } from "./LiveQueryCard";
 import { LiveLocalTime } from "./live-local-time";
-import { SqlChartSignature } from "./sql-chart-signature";
 
 export function Hero() {
   const initial = formatAmmanTime();
@@ -10,7 +11,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative mx-auto grid max-w-6xl gap-12 px-6 pt-32 pb-24 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-40 md:pb-32"
+      className="relative mx-auto grid max-w-6xl gap-12 px-6 pt-24 pb-12 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-32 md:pb-16"
     >
       <div className="flex flex-col justify-center gap-8">
         <div className="flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-wider text-text-muted">
@@ -28,13 +29,7 @@ export function Hero() {
         </h1>
         <p className="max-w-xl text-lg text-text-muted md:text-xl">{profile.pitch}</p>
         <div className="flex flex-wrap items-center gap-3">
-          <a
-            href={`mailto:${profile.email}`}
-            className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition hover:translate-y-[-1px]"
-          >
-            <Mail size={16} />
-            Email me
-          </a>
+          <HeroEmailButton />
           <a
             href={profile.resumeUrl}
             download
@@ -46,7 +41,7 @@ export function Hero() {
         </div>
       </div>
       <div className="flex items-center">
-        <SqlChartSignature />
+        <LiveQueryCard />
       </div>
     </section>
   );
