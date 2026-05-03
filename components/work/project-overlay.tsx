@@ -9,6 +9,7 @@ const STATUS_LABEL: Record<Project["status"], string> = {
   shipped: "Shipped",
   deployed: "Deployed",
   "in-progress": "In progress",
+  "early-stage": "Early stage",
 };
 
 export function ProjectOverlay({ project, onClose }: { project: Project; onClose: () => void }) {
