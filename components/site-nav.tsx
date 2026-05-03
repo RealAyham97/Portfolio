@@ -8,8 +8,6 @@ const SECTIONS = [
   { id: "top", label: "Home" },
   { id: "about", label: "About" },
   { id: "work", label: "Work" },
-  { id: "stack", label: "Stack" },
-  { id: "numbers", label: "Numbers" },
   { id: "contact", label: "Contact" },
 ] as const;
 
