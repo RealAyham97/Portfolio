@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: var(--font-instrument-serif);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+}
+
+:root {
+  --background: oklch(0.985 0.003 80);
+  --surface-1: oklch(0.96 0.003 80);
+  --surface-2: oklch(0.93 0.003 80);
+  --text: oklch(0.18 0 0);
+  --text-muted: oklch(0.45 0 0);
+  --border: oklch(0.85 0.003 80);
+  --accent: oklch(0.68 0.15 70);
+  --accent-fg: oklch(0.985 0.003 80);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --surface-1: oklch(0.18 0 0);
+  --surface-2: oklch(0.22 0 0);
+  --text: oklch(0.95 0 0);
+  --text-muted: oklch(0.65 0 0);
+  --border: oklch(0.28 0 0);
+  --accent: oklch(0.78 0.15 70);
+  --accent-fg: oklch(0.18 0 0);
+}
+
+* { border-color: var(--border); }
+
+html { color-scheme: light dark; -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--accent); color: var(--accent-fg); }
+
+@view-transition { navigation: auto; }
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+  @keyframes reveal-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.reveal-fallback { opacity: 0; transform: translateY(12px); transition: opacity 600ms ease, transform 600ms ease; }
+.reveal-fallback[data-in="true"] { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-fallback { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+  *, *::before, *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+}
