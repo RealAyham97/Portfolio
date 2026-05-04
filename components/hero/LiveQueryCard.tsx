@@ -17,7 +17,7 @@ const SCENES: Scene[] = [
     id: "portfolio-visitors",
     header: "PORTFOLIO_VISITORS",
     query:
-      "SELECT   source,\n         COUNT(*) AS visits\nFROM     portfolio_traffic\nWHERE    month = '2025-05'\nGROUP BY source\nORDER BY visits DESC;",
+      "SELECT   source,\n         COUNT(*) AS visits\nFROM     portfolio_traffic\nWHERE    month = '2025-05'\nGROUP BY source;",
     bars: [
       { label: "LINKEDIN", value: 412 },
       { label: "DIRECT", value: 318, highlight: true },
