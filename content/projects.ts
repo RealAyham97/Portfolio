@@ -73,7 +73,7 @@ export const projects: Project[] = [
     description:
       "Discovery + interface design phase for a Jordan-based SMB. Inventory ledger, sales pipeline, and HR workflows in one console; pursuing low operational overhead via static front-end + serverless functions.",
     stack: ["Figma", "Confluence", "SQL"],
-    image: "/Daftara.jpeg",
+    image: "/Daftara.webp",
   },
   {
     slug: "churn-model",
@@ -83,6 +83,6 @@ export const projects: Project[] = [
     description:
       "Feature engineering on usage telemetry and billing events; gradient-boosted classifier with calibrated probability output; Power BI scorecard for CS team triage.",
     stack: ["Python", "Scikit-learn", "Power BI"],
-    image: "/Churn Prediction Model.jpeg",
+    image: "/Churn Prediction Model.webp",
   },
 ];
