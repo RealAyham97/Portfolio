@@ -115,7 +115,7 @@ export function LiveQueryCard() {
 
   return (
     <div
-      className="rounded-xl border border-border bg-surface-1 p-4 font-mono text-xs sm:text-sm"
+      className="rounded-xl border border-border bg-surface-1 p-4 font-mono text-xs sm:text-sm overflow-hidden"
       aria-live="polite"
       aria-label={ariaLabel}
       onMouseEnter={() => setPaused(true)}
@@ -148,7 +148,7 @@ export function LiveQueryCard() {
         >
           {/* SQL block */}
           <pre
-            className="whitespace-pre leading-6"
+            className="whitespace-pre-wrap leading-6"
             style={{ minHeight: MAX_LINES * LINE_H_PX }}
           >
             {tokenizeSQL(scene.query)}

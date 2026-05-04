@@ -23,7 +23,7 @@ export function Hero() {
         </div>
         <h1
           className="font-display italic leading-[0.95] text-text"
-          style={{ fontSize: "clamp(3.5rem, 12vw, 9rem)" }}
+          style={{ fontSize: "clamp(2.5rem, 12vw, 9rem)" }}
         >
           {profile.name}
         </h1>

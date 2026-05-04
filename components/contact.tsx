@@ -15,25 +15,25 @@ export function Contact() {
       </Reveal>
       <Reveal className="mt-10">
         <ul className="grid gap-4 font-mono text-sm text-text-muted sm:grid-cols-3">
-          <li className="flex items-center gap-2">
-            <Mail size={14} />
-            <a href={`mailto:${profile.email}`} className="hover:text-text">
+          <li className="flex min-w-0 items-center gap-2">
+            <Mail size={14} className="shrink-0" />
+            <a href={`mailto:${profile.email}`} className="truncate hover:text-text">
               {profile.email}
             </a>
           </li>
-          <li className="flex items-center gap-2">
-            <Phone size={14} />
-            <a href={`tel:${profile.phone.replace(/\s/g, "")}`} className="hover:text-text">
+          <li className="flex min-w-0 items-center gap-2">
+            <Phone size={14} className="shrink-0" />
+            <a href={`tel:${profile.phone.replace(/\s/g, "")}`} className="truncate hover:text-text">
               {profile.phone}
             </a>
           </li>
-          <li className="flex items-center gap-2">
-            <Linkedin size={14} />
+          <li className="flex min-w-0 items-center gap-2">
+            <Linkedin size={14} className="shrink-0" />
             <a
               href={profile.socials.linkedin}
               target="_blank"
               rel="noreferrer noopener"
-              className="hover:text-text"
+              className="truncate hover:text-text"
             >
               linkedin.com/in/ayham-alrawashdeh
             </a>

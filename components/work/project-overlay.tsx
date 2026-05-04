@@ -53,7 +53,7 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
         >
           <X size={16} />
         </button>
-        <article className="mx-auto max-w-4xl space-y-8 p-8 md:p-12">
+        <article className="mx-auto max-w-4xl space-y-8 p-5 sm:p-8 md:p-12">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface-2">
             {project.image && (
               <Image
