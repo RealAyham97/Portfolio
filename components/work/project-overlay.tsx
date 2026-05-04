@@ -30,12 +30,16 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
         onClick={onClose}
         className="fixed inset-0 z-40 bg-background/85 backdrop-blur-sm"
         aria-hidden
       />
       <motion.div
-        layoutId={`project-${project.slug}`}
+        initial={{ opacity: 0, scale: 0.97, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.97, y: 8 }}
+        transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
         className="fixed inset-2 sm:inset-6 z-50 overflow-y-auto rounded-2xl border border-border bg-surface-1"
         role="dialog"
         aria-modal="true"
@@ -50,10 +54,7 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
           <X size={16} />
         </button>
         <article className="mx-auto max-w-4xl space-y-8 p-8 md:p-12">
-          <motion.div
-            layoutId={`project-${project.slug}-image`}
-            className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface-2"
-          >
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface-2">
             {project.image && (
               <Image
                 src={project.image}
@@ -63,19 +64,18 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
                 sizes="(max-width: 768px) 100vw, 900px"
               />
             )}
-          </motion.div>
+          </div>
           <header className="space-y-3">
             <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
               {STATUS_LABEL[project.status]}
               {project.client ? ` · ${project.client}` : ""}
             </div>
-            <motion.h3
-              layoutId={`project-${project.slug}-title`}
+            <h3
               className="font-display italic text-text"
               style={{ fontSize: "clamp(2rem, 5vw, 3rem)" }}
             >
               {project.title}
-            </motion.h3>
+            </h3>
             <p className="text-text-muted leading-relaxed">{project.description}</p>
           </header>
           <section className="space-y-3">
