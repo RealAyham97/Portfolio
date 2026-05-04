@@ -25,7 +25,7 @@ export function SiteNav() {
           onClick={() => setOpen(false)}
           className="font-mono uppercase tracking-wider text-text-muted hover:text-text"
         >
-          Aiham AR.
+          Aiham R.
         </Link>
 
         {/* Desktop links */}
