@@ -1,6 +1,6 @@
 export const profile = {
   name: "Aiham AlRawashdeh",
-  role: "Data Analyst",
+  role: "Analyst & Founder",
   location: "Amman, Jordan",
   timezone: "Asia/Amman" as const,
   pitch: "Building businesses, backed by data.",
