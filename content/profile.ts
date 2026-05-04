@@ -3,7 +3,7 @@ export const profile = {
   role: "Analyst & Founder",
   location: "Amman, Jordan",
   timezone: "Asia/Amman" as const,
-  pitch: "Building businesses, backed by data.",
+  pitch: "And I build businesses, backed by data.",
   email: "Ayham19@icloud.com",
   phone: "+962 79 681 1503",
   resumeUrl: "/Aiham AlRawashdeh CV.pdf",

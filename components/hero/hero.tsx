@@ -21,12 +21,15 @@ export function Hero() {
           <span aria-hidden>·</span>
           <LiveLocalTime initial={initial} />
         </div>
-        <h1
-          className="font-display italic leading-[0.95] text-text"
-          style={{ fontSize: "clamp(2.5rem, 12vw, 9rem)" }}
-        >
-          {profile.name}
-        </h1>
+        <div className="space-y-2">
+          <p className="font-mono text-sm text-text-muted">Hi, my name is</p>
+          <h1
+            className="font-display italic leading-[0.95] text-text"
+            style={{ fontSize: "clamp(2.5rem, 12vw, 9rem)" }}
+          >
+            {profile.name}
+          </h1>
+        </div>
         <p className="max-w-xl text-lg text-text-muted md:text-xl">{profile.pitch}</p>
         <div className="flex flex-wrap items-center gap-3">
           <HeroEmailButton />
