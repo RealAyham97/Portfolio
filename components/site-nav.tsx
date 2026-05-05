@@ -13,12 +13,19 @@ const SECTIONS = [
   { id: "contact", label: "Contact" },
 ] as const;
 
-// Stable reference outside component — prevents useScrollSpy's effect
-// from re-running (and recreating the IntersectionObserver) on every render.
-const SECTION_IDS = SECTIONS.map((s) => s.id);
+// Observe every section on the page (including stack/numbers which are not
+// in the nav) so the active state never freezes while scrolling through them.
+// Spread at module level to keep a stable array reference across renders.
+const ALL_SECTION_IDS = ["top", "about", "work", "stack", "numbers", "contact"];
+
+// Map observed section → nav section for dot indicator display.
+function toNavId(id: string): string {
+  if (id === "stack" || id === "numbers") return "work";
+  return id;
+}
 
 export function SiteNav() {
-  const active = useScrollSpy(SECTION_IDS);
+  const active = toNavId(useScrollSpy(ALL_SECTION_IDS));
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

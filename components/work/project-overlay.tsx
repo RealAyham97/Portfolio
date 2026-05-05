@@ -40,19 +40,25 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.97, y: 8 }}
         transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
-        className="fixed inset-2 sm:inset-6 z-50 overflow-y-auto rounded-2xl border border-border bg-surface-1"
+        className="fixed inset-2 sm:inset-6 z-50 flex flex-col rounded-2xl border border-border bg-surface-1"
         role="dialog"
         aria-modal="true"
         aria-label={project.title}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-text-muted transition hover:text-text"
-        >
-          <X size={16} />
-        </button>
+        {/* Close button row — never scrolls, always tappable */}
+        <div className="flex shrink-0 justify-end px-4 pt-3 pb-1">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-text-muted transition hover:text-text"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="overflow-y-auto flex-1">
         <article className="mx-auto max-w-4xl space-y-8 p-5 sm:p-8 md:p-12">
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface-2">
             {project.image && (
@@ -130,6 +136,7 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
             </section>
           )}
         </article>
+        </div>
       </motion.div>
     </>
   );
