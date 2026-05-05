@@ -1,9 +1,9 @@
 export const about = {
   paragraphs: [
-    "I'm an analyst turned entrepreneur. Six years working across aviation, consulting, media, and enterprise tech gave me a sharp eye for where businesses bleed value, and I now build companies to capture it.",
-    "Ecompanio, Padel Score, and Blue Moon are active bets: a data-backed ATS platform, an IoT scoring system for padel courts, and a cloud kitchen. The data skills still run everything, just pointed at my own P&L now.",
+    "I'm an analyst turned entrepreneur. Six years across aviation, consulting, media, and enterprise tech sharpened my eye for where businesses bleed value. Digital marketing gave me the toolkit to bring the right customers to the fix.",
+    "These days I run paid acquisition and growth strategy for early-stage companies while building my own. The data work still drives everything, just pointed at real P&Ls now.",
   ],
-  now: "Founding, designing, and shipping across three ventures while keeping the data sharp.",
+  now: "Building my own ventures and running digital growth for early-stage founders.",
   past: ["Gargash Enterprises", "JSIT / Republic Airways", "Deloitte", "Shahid / MBC"],
-  industries: ["Digital Growth", "Aviation Operations", "Big Four Consulting", "Media Technology"],
+  industries: ["Digital Marketing", "Automotive", "Aviation Operations", "Big Four Consulting", "Media Technology"],
 };
