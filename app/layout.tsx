@@ -20,20 +20,20 @@ const SITE_URL = "https://www.aihamalrawashdeh.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: `${profile.name} — ${profile.role}`, template: `%s · ${profile.name}` },
+  title: { default: `${profile.name} ·${profile.role}`, template: `%s · ${profile.name}` },
   description: profile.pitch,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: SITE_URL,
     siteName: profile.name,
-    title: `${profile.name} — ${profile.role}`,
+    title: `${profile.name} ·${profile.role}`,
     description: profile.pitch,
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${profile.name} — ${profile.role}`,
+    title: `${profile.name} ·${profile.role}`,
     description: profile.pitch,
   },
   robots: { index: true, follow: true },

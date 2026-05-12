@@ -93,7 +93,7 @@ export function ContactForm() {
 
         {status === "success" && (
           <p className="font-mono text-xs text-text-muted">
-            Message received — I'll get back to you soon.
+            Message received. I'll get back to you soon.
           </p>
         )}
         {status === "error" && (

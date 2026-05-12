@@ -23,11 +23,11 @@ export function Services() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
-        <p className="text-center font-mono text-sm uppercase tracking-wider text-text-muted mb-10">
+        <p className="text-center text-base text-text-muted mb-10">
           Pick What You Need
         </p>
       </Reveal>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         {services.map((s) => (
           <Reveal key={s.href}>
             <ServiceCard {...s} />
@@ -53,28 +53,27 @@ function ServiceCard({
 }) {
   return (
     <Link href={href} className="group block">
-      <div className="relative overflow-hidden rounded-[3.5rem] border border-border bg-surface-2 h-80 transition-colors hover:border-accent">
-        {/* Circle logo image */}
-        <div className="absolute inset-0 flex items-center justify-center p-6">
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            fill
-            className="object-contain p-6"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-        </div>
-        {/* Category title overlaid in the empty center of the circle */}
+      {/* Card: aspect-[4/3] matches Figma proportions and scales naturally on mobile */}
+      <div className="relative aspect-[4/3] rounded-[3rem] border border-border bg-surface-2 transition-colors hover:border-accent">
+        {/* Circular PNG fills the card; no overflow-hidden so it can sit flush with the rounded edges */}
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          className="object-contain p-2"
+          sizes="(max-width: 640px) 100vw, 50vw"
+        />
+        {/* Category title centered in the open centre of the circle */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <span
             className="font-display italic text-text/80 text-center whitespace-pre-line leading-tight"
-            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.25rem)" }}
+            style={{ fontSize: "clamp(1.6rem, 4vw, 2.25rem)" }}
           >
             {title}
           </span>
         </div>
       </div>
-      <p className="mt-4 text-center text-sm text-text-muted">{subtitle}</p>
+      <p className="mt-3 text-center text-sm text-text-muted/80">{subtitle}</p>
     </Link>
   );
 }

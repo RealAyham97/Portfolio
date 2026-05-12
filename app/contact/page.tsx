@@ -36,7 +36,7 @@ export default function ContactPage() {
                   Let's talk
                 </p>
                 <p className="text-text-muted leading-relaxed">
-                  Whether it's a project, a question, or just a hello — my inbox
+                  Whether it's a project, a question, or just a hello, my inbox
                   is open.
                 </p>
               </div>

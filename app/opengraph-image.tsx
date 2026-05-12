@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${profile.name} — ${profile.role}`;
+export const alt = `${profile.name} · ${profile.role}`;
 
 // Hex values approximate the dark-mode tokens in app/globals.css (Satori does not parse oklch()).
 // Keep #0a0a0a/#f1f1f1/#e8a04d in sync with --background/--text/--accent under .dark.

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "What services do you offer?",
-    a: "I work across two main areas: IT Services (Web development, data analysis, business analysis, and business intelligence) and Digital Marketing (paid acquisition, SEO, and analytics). Both are data-driven and built around measurable outcomes.",
+    a: "I work across two main areas: IT Services (web development, data analysis, business analysis, and business intelligence) and Digital Marketing (paid acquisition, SEO, and analytics). Both are data-driven and built around measurable outcomes.",
   },
   {
     q: "Who do you typically work with?",
@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "Where are you based? Do you work remotely?",
-    a: "I'm based in Amman, Jordan and work with clients remotely and in-person across the region.",
+    a: "I'm based in Amman, Jordan, and work with clients remotely and in-person across the region.",
   },
   {
     q: "How do I start working with you?",
@@ -31,7 +31,7 @@ const faqs = [
   },
   {
     q: "What does a typical project look like?",
-    a: "It usually starts with a discovery session to understand the problem, followed by a scoped proposal. From there it depends on the work. Dashboards and automations typically run 2-6 weeks, marketing campaigns are ongoing.",
+    a: "It usually starts with a discovery session to understand the problem, followed by a scoped proposal. From there, it depends on the work. Dashboards and automations typically run 2–6 weeks, marketing campaigns are ongoing.",
   },
 ] as const;
 
