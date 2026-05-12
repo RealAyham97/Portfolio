@@ -26,8 +26,8 @@ export async function sendContactEmail(
 
   try {
     const { error } = await resend.emails.send({
-      from: "Portfolio Contact <noreply@send.aihamalrawashdeh.com>",
-      to: "Ayham19@icloud.com",
+      from: "Portfolio Contact <onboarding@resend.dev>",
+      to: "rawashdeh199@gmail.com",
       replyTo: email,
       subject: `New message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
