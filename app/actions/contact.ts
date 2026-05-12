@@ -25,7 +25,7 @@ export async function sendContactEmail(
   }
 
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "Portfolio Contact <noreply@send.aihamalrawashdeh.com>",
       to: "Ayham19@icloud.com",
       replyTo: email,
@@ -38,6 +38,11 @@ export async function sendContactEmail(
         <p>${message.replace(/\n/g, "<br />")}</p>
       `,
     });
+
+    if (error) {
+      console.error("[contact] Resend error:", error);
+      return { status: "error", message: error.message };
+    }
 
     return { status: "success" };
   } catch (err) {
