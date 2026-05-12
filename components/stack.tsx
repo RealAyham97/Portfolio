@@ -1,7 +1,11 @@
 import { stack } from "@/content/stack";
 import { Reveal } from "./reveal";
 
-export function Stack() {
+export function Stack({ categories }: { categories?: string[] }) {
+  const filtered = categories
+    ? stack.filter((c) => categories.includes(c.name))
+    : stack;
+
   return (
     <section id="stack" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
@@ -13,7 +17,7 @@ export function Stack() {
         </h2>
       </Reveal>
       <div className="mt-10 grid gap-10 md:grid-cols-2">
-        {stack.map((cat) => (
+        {filtered.map((cat) => (
           <Reveal key={cat.name} className="space-y-3">
             <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
               {cat.name}
