@@ -11,7 +11,7 @@ const LINKS = [
   { href: "/marketing", label: "Marketing" },
   { href: "/contact", label: "Contact" },
   { href: "#", label: "Blog" },
-  { href: "#", label: "FAQ" },
+  { href: "/faq", label: "FAQ" },
 ] as const;
 
 export function SiteNav() {
