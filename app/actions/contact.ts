@@ -40,7 +40,9 @@ export async function sendContactEmail(
     });
 
     return { status: "success" };
-  } catch {
-    return { status: "error", message: "Failed to send. Please try again." };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[contact] Resend error:", msg);
+    return { status: "error", message: `Failed to send: ${msg}` };
   }
 }
