@@ -1,4 +1,4 @@
-import { Reveal } from "@/components/reveal";
+import { ParallaxZoomHero } from "@/components/marketing/parallax-zoom-hero";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import type { Metadata } from "next";
@@ -12,25 +12,11 @@ export default function MarketingPage() {
   return (
     <>
       <SiteNav />
-      <main>
-        <section className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
-          <Reveal>
-            <h1
-              className="font-display italic text-text/80 leading-none"
-              style={{ fontSize: "clamp(3.5rem, 8vw, 5rem)" }}
-            >
-              Digital
-              <br />
-              Marketing
-            </h1>
-          </Reveal>
-          <Reveal>
-            <p className="mt-8 font-mono text-sm uppercase tracking-wider text-text-muted">
-              Coming soon
-            </p>
-          </Reveal>
-        </section>
-      </main>
+      <ParallaxZoomHero
+        // Replace with your screen recording when ready: put the mp4 in public/videos/
+        // videoSrc="/videos/marketing-search.mp4"
+        videoSrc="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4"
+      />
       <SiteFooter />
     </>
   );
