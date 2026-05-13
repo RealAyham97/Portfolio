@@ -39,6 +39,18 @@ const W_STOPS: Stop[] = [
   { at: 1.0, v: 1320 / FIGMA_W },
 ];
 
+// Laptop center position: starts right-of-center (alongside heading), glides to true center
+const X_CENTER_STOPS: Stop[] = [
+  { at: 0.0, v: 0.657 },
+  { at: 0.5, v: 0.5 },
+  { at: 1.0, v: 0.5 },
+];
+const Y_CENTER_STOPS: Stop[] = [
+  { at: 0.0, v: 0.37 },
+  { at: 0.5, v: 0.5 },
+  { at: 1.0, v: 0.5 },
+];
+
 // ── Props ──────────────────────────────────────────────────────────────────
 type Props = {
   /**
@@ -100,7 +112,7 @@ export function ParallaxZoomHero({
     };
   }, []);
 
-  // Compute laptop dims (centered, constrained to fit viewport)
+  // Compute laptop dims and center position
   const stage = useMemo(() => {
     const targetW = interp(progress, W_STOPS) * vp.w;
     const maxH = vp.h * 0.78;
@@ -110,7 +122,9 @@ export function ParallaxZoomHero({
       h = maxH;
       w = h * LAPTOP_ASPECT;
     }
-    return { w, h };
+    const cx = interp(progress, X_CENTER_STOPS) * vp.w;
+    const cy = interp(progress, Y_CENTER_STOPS) * vp.h;
+    return { w, h, cx, cy };
   }, [progress, vp]);
 
   // Headline + subtitle visibility
@@ -190,11 +204,9 @@ export function ParallaxZoomHero({
         <div
           style={{
             position: "absolute",
-            left: vp.w / 2,
-            top: vp.h / 2,
-            transform: `translate(-50%, calc(-50% - ${
-              progress < 0.98 ? stage.h * 0.022 : 0
-            }px))`,
+            left: stage.cx,
+            top: stage.cy,
+            transform: "translate(-50%, -50%)",
             zIndex: 10,
           }}
         >
