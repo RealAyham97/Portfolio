@@ -204,9 +204,8 @@ export function ParallaxZoomHero({
         <div
           style={{
             position: "absolute",
-            left: stage.cx,
-            top: stage.cy,
-            transform: "translate(-50%, -50%)",
+            left: stage.cx - stage.w / 2,
+            top: stage.cy - stage.h / 2,
             zIndex: 10,
           }}
         >
