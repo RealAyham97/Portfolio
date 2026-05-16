@@ -6,8 +6,7 @@ import { Laptop } from "./laptop";
 import { SearchScreen } from "./search-screen";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
-const easeInOutCubic = (t: number) =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 type Stop = { at: number; v: number };
 
@@ -134,9 +133,7 @@ export function ParallaxZoomHero({
     { at: 0.6, v: 220 },
     { at: 1, v: 280 },
   ]);
-  const subtitleOpacity = clamp(
-    Math.min((progress - 0.12) / 0.15, 1 - (progress - 0.45) / 0.1),
-  );
+  const subtitleOpacity = clamp(Math.min((progress - 0.12) / 0.15, 1 - (progress - 0.45) / 0.1));
 
   // Video crossfade at the end
   const videoOpacity = clamp((progress - 0.92) / 0.06);
@@ -209,12 +206,7 @@ export function ParallaxZoomHero({
             zIndex: 10,
           }}
         >
-          <Laptop
-            width={stage.w}
-            height={stage.h}
-            dark={dark}
-            baseVisible={progress < 0.98}
-          >
+          <Laptop width={stage.w} height={stage.h} dark={dark} baseVisible={progress < 0.98}>
             {/* Search mock (fades out at full zoom) */}
             <div
               style={{

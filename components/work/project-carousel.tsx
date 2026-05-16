@@ -13,10 +13,7 @@ export function ProjectCarousel({ projects }: { projects: Project[] }) {
   return (
     <>
       <div className="marquee-viewport relative overflow-hidden">
-        <ul
-          className="marquee-track flex w-max items-stretch"
-          aria-label="Featured projects"
-        >
+        <ul className="marquee-track flex w-max items-stretch" aria-label="Featured projects">
           {track.map((p, i) => (
             <li
               key={`${p.slug}-${i}`}
