@@ -107,8 +107,3 @@ body {
 .marquee-viewport:hover .marquee-track {
   animation-play-state: paused;
 }
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-  }
-}
