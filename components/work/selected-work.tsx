@@ -1,7 +1,7 @@
 import { projects } from "@/content/projects";
 import { Reveal } from "../reveal";
 import { FeaturedProject } from "./featured-project";
-import { ProjectGrid } from "./project-grid";
+import { ProjectCarousel } from "./project-carousel";
 
 export function SelectedWork() {
   const featured = projects.find((p) => p.featured);
@@ -18,7 +18,7 @@ export function SelectedWork() {
         </h2>
       </Reveal>
       {featured && <FeaturedProject project={featured} />}
-      <ProjectGrid projects={rest} />
+      <ProjectCarousel projects={rest} />
     </section>
   );
 }
