@@ -19,9 +19,9 @@ export function ProjectCard({
       type="button"
       layout
       onClick={() => onOpen(project)}
-      className="group relative overflow-hidden rounded-xl border border-border bg-surface-1 text-left transition hover:border-text-muted"
+      className="group relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-surface-1 text-left transition hover:border-text-muted"
     >
-      <div className="relative aspect-[16/10] w-full bg-surface-2">
+      <div className="relative aspect-[16/10] w-full flex-shrink-0 bg-surface-2">
         {project.image ? (
           <Image
             src={project.image}
@@ -32,7 +32,7 @@ export function ProjectCard({
           />
         ) : null}
       </div>
-      <div className="space-y-2 p-5">
+      <div className="flex flex-1 flex-col gap-2 p-5">
         <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-text-muted">
           <span>{STATUS_LABEL[project.status]}</span>
           <span className="opacity-0 transition group-hover:opacity-100">Open →</span>
