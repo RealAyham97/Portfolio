@@ -24,27 +24,34 @@ function interp(p: number, stops: Stop[]): number {
 
 const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 
-// Card scales from 1.0 (current size) to 1.5. 1.5 is the largest zoom where
-// the popover (also scaled) reliably fits in the viewport when flipped above.
+// Card scales 1.0 → 1.5. 1.5 is the max where the popover (also scaled) fits
+// in the viewport when flipped above the bars.
 const SCALE_STOPS: Stop[] = [
   { at: 0.0, v: 1.0 },
   { at: 1.0, v: 1.5 },
 ];
 
-// Fraction-of-viewport-width to shift the card LEFT so its center ends at
-// viewport center. 0 at scroll start, ~-0.28 at viewport center.
-const X_SHIFT_STOPS: Stop[] = [
-  { at: 0.0, v: 0.0 },
-  { at: 0.5, v: -0.28 },
-  { at: 1.0, v: -0.28 },
-];
+// Compute the pixel offset needed to slide the card from the right grid column
+// to viewport center. Mirrors the layout: max-w-6xl, px-6, grid 1.4fr_1fr,
+// gap-16. Returns 0 below the md breakpoint where the grid stacks.
+function rightColumnCenterShift(vpW: number): number {
+  if (vpW < 768) return 0;
+  const containerW = Math.min(vpW, 1152); // max-w-6xl
+  const contentW = containerW - 48; // px-6 each side
+  const colGap = 64; // gap-16
+  const rightColW = (contentW - colGap) / 2.4; // 1fr of 1.4fr_1fr
+  const leftColW = rightColW * 1.4;
+  const containerLeft = (vpW - containerW) / 2;
+  const rightColCenter = containerLeft + 24 + leftColW + colGap + rightColW / 2;
+  return vpW / 2 - rightColCenter; // negative = shift left
+}
 
 type Props = {
-  /** How tall the scroll section is, in vh. Longer = slower zoom. @default 350 */
+  /** Scroll runway in vh. Longer = slower zoom. @default 250 */
   scrollLengthVh?: number;
 };
 
-export function ParallaxItCard({ scrollLengthVh = 350 }: Props) {
+export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   const wrapRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [vpW, setVpW] = useState(1440);
@@ -81,7 +88,13 @@ export function ParallaxItCard({ scrollLengthVh = 350 }: Props) {
   }, []);
 
   const scale = interp(progress, SCALE_STOPS);
-  const leftPx = interp(progress, X_SHIFT_STOPS) * vpW;
+  // X shift: 0 at start, full shift-to-center by progress=0.5
+  const targetShift = rightColumnCenterShift(vpW);
+  const leftPx = interp(progress, [
+    { at: 0, v: 0 },
+    { at: 0.5, v: targetShift },
+    { at: 1, v: targetShift },
+  ]);
 
   return (
     <section
@@ -91,8 +104,8 @@ export function ParallaxItCard({ scrollLengthVh = 350 }: Props) {
       className="bg-background"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Original grid hero — same layout, same title position */}
-        <section className="relative mx-auto grid h-full max-w-6xl gap-12 px-6 pt-24 pb-12 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-32 md:pb-16">
+        {/* Original grid hero — same layout/title position, tighter vertical padding */}
+        <section className="relative mx-auto grid h-full max-w-6xl gap-12 px-6 pt-20 pb-8 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-20 md:pb-10">
           <div className="flex flex-col justify-center">
             <h1
               className="font-display italic leading-none text-text/80"
@@ -104,7 +117,6 @@ export function ParallaxItCard({ scrollLengthVh = 350 }: Props) {
             </h1>
           </div>
           <div className="flex items-center">
-            {/* Card scales in place and slides left to viewport center */}
             <div
               style={{
                 position: "relative",
