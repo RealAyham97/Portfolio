@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 
 // ──────────────────────────────────────────────────────────────────────────
 // IT-experience live-query card.
@@ -174,7 +174,20 @@ function fmtMonth(iso: string): string {
 
 export function ItExperienceCard() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [popoverSide, setPopoverSide] = useState<"above" | "below">("below");
+  const barsRef = useRef<HTMLDivElement>(null);
   const active = hoveredIdx == null ? null : JOBS[hoveredIdx];
+
+  // Smart flip: choose the side with more viewport space when a bar is hovered.
+  const setHover = (idx: number | null) => {
+    setHoveredIdx(idx);
+    if (idx != null && barsRef.current) {
+      const rect = barsRef.current.getBoundingClientRect();
+      const spaceAbove = rect.top;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      setPopoverSide(spaceAbove > spaceBelow ? "above" : "below");
+    }
+  };
 
   const query = active
     ? `SELECT  company, role, months\nFROM    experience\nWHERE   id = ${active.id};`
@@ -206,7 +219,7 @@ export function ItExperienceCard() {
       </pre>
 
       {/* Bars + popover anchor */}
-      <div className="relative mt-4" onMouseLeave={() => setHoveredIdx(null)}>
+      <div className="relative mt-4" ref={barsRef} onMouseLeave={() => setHover(null)}>
         <div className="flex items-end gap-2" style={{ height: BAR_H_PX }}>
           {JOBS.map((job, idx) => {
             const h = Math.round(heightFor(idx) * BAR_H_PX);
@@ -215,9 +228,9 @@ export function ItExperienceCard() {
               <button
                 key={job.id}
                 type="button"
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onFocus={() => setHoveredIdx(idx)}
-                onBlur={() => setHoveredIdx(null)}
+                onMouseEnter={() => setHover(idx)}
+                onFocus={() => setHover(idx)}
+                onBlur={() => setHover(null)}
                 aria-label={`${job.company} — ${job.role}, ${job.months} months`}
                 className="flex-1 h-full flex items-end p-0 bg-transparent border-0 cursor-pointer outline-none"
               >
@@ -257,7 +270,9 @@ export function ItExperienceCard() {
             className="absolute z-20 rounded-lg border border-border bg-surface-1 p-3 pointer-events-none"
             style={{
               width: POPOVER_W_PX,
-              top: "calc(100% + 10px)",
+              ...(popoverSide === "below"
+                ? { top: "calc(100% + 10px)" }
+                : { bottom: "calc(100% + 10px)" }),
               left: `clamp(0px, calc(${barCenterPct}% - ${POPOVER_W_PX / 2}px), calc(100% - ${POPOVER_W_PX}px))`,
               boxShadow: "0 12px 32px -8px rgba(0, 0, 0, 0.55), 0 4px 12px -4px rgba(0, 0, 0, 0.4)",
             }}
