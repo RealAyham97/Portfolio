@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ItExperienceCard } from "./ItExperienceCard";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -24,27 +24,27 @@ function interp(p: number, stops: Stop[]): number {
 
 const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 
-// Card scales 1.0 → 1.5. 1.5 is the max where the popover (also scaled) fits
-// in the viewport when flipped above the bars.
+// Card scales 1.0 → 1.5.
 const SCALE_STOPS: Stop[] = [
   { at: 0.0, v: 1.0 },
   { at: 1.0, v: 1.5 },
 ];
 
-// Compute the pixel offset needed to slide the card from the right grid column
-// to viewport center. Mirrors the layout: max-w-6xl, px-6, grid 1.4fr_1fr,
-// gap-16. Returns 0 below the md breakpoint where the grid stacks.
-function rightColumnCenterShift(vpW: number): number {
-  if (vpW < 768) return 0;
-  const containerW = Math.min(vpW, 1152); // max-w-6xl
-  const contentW = containerW - 48; // px-6 each side
-  const colGap = 64; // gap-16
-  const rightColW = (contentW - colGap) / 2.4; // 1fr of 1.4fr_1fr
-  const leftColW = rightColW * 1.4;
-  const containerLeft = (vpW - containerW) / 2;
-  const rightColCenter = containerLeft + 24 + leftColW + colGap + rightColW / 2;
-  return vpW / 2 - rightColCenter; // negative = shift left
-}
+// Card center X (as a fraction of viewport width):
+// starts at the right-column position next to the title, ends centered.
+const CX_STOPS: Stop[] = [
+  { at: 0.0, v: 0.745 },
+  { at: 0.5, v: 0.5 },
+  { at: 1.0, v: 0.5 },
+];
+
+// Card center Y (as a fraction of viewport height):
+// starts next to the title (matching its vertical center), ends below it.
+const CY_STOPS: Stop[] = [
+  { at: 0.0, v: 0.32 },
+  { at: 0.5, v: 0.7 },
+  { at: 1.0, v: 0.7 },
+];
 
 type Props = {
   /** Scroll runway in vh. Longer = slower zoom. @default 250 */
@@ -54,14 +54,6 @@ type Props = {
 export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   const wrapRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
-  const [vpW, setVpW] = useState(1440);
-
-  useLayoutEffect(() => {
-    const update = () => setVpW(window.innerWidth);
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
 
   useEffect(() => {
     let raf = 0;
@@ -88,49 +80,43 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   }, []);
 
   const scale = interp(progress, SCALE_STOPS);
-  // X shift: 0 at start, full shift-to-center by progress=0.5
-  const targetShift = rightColumnCenterShift(vpW);
-  const leftPx = interp(progress, [
-    { at: 0, v: 0 },
-    { at: 0.5, v: targetShift },
-    { at: 1, v: targetShift },
-  ]);
+  const cxPct = interp(progress, CX_STOPS) * 100;
+  const cyPct = interp(progress, CY_STOPS) * 100;
 
   return (
     <section
       ref={wrapRef}
-      aria-label="IT services scrollytelling intro"
+      aria-label="IT experience scrollytelling"
       style={{ position: "relative", height: `${scrollLengthVh}vh` }}
       className="bg-background"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Original grid hero — same layout/title position, tighter vertical padding */}
-        <section className="relative mx-auto grid h-full max-w-6xl gap-12 px-6 pt-20 pb-8 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-20 md:pb-10">
-          <div className="flex flex-col justify-center">
-            <h1
-              className="font-display italic leading-none text-text/80"
-              style={{ fontSize: "clamp(3.5rem, 8vw, 5rem)" }}
-            >
-              IT
-              <br />
-              Services
-            </h1>
-          </div>
-          <div className="flex items-center">
-            <div
-              style={{
-                position: "relative",
-                left: `${leftPx}px`,
-                transform: `scale(${scale})`,
-                transformOrigin: "center center",
-                width: "100%",
-                zIndex: 10,
-              }}
-            >
-              <ItExperienceCard />
-            </div>
-          </div>
-        </section>
+        {/* Title at top-left — matches the Contact page heading section */}
+        <div className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+          <h1
+            className="font-display italic leading-none text-text/80"
+            style={{ fontSize: "clamp(3.5rem, 8vw, 5rem)" }}
+          >
+            IT
+            <br />
+            Services
+          </h1>
+        </div>
+
+        {/* Card — absolutely positioned, animates next to title → below title centered */}
+        <div
+          style={{
+            position: "absolute",
+            left: `${cxPct}%`,
+            top: `${cyPct}%`,
+            width: 420,
+            transform: `translate(-50%, -50%) scale(${scale})`,
+            transformOrigin: "center center",
+            zIndex: 10,
+          }}
+        >
+          <ItExperienceCard />
+        </div>
       </div>
     </section>
   );
