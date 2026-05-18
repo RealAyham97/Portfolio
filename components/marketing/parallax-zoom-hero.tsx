@@ -45,11 +45,10 @@ const CY_STOPS: Stop[] = [
 ];
 
 // Fixed laptop dimensions at scale=1.
-// Height matches the IT card (315). Width derived from the laptop's
-// natural aspect ratio (330/195 ≈ 1.692) so it still looks like a laptop.
-const LAPTOP_H = 315;
-const LAPTOP_ASPECT = 330 / 195;
-const LAPTOP_W = Math.round(LAPTOP_H * LAPTOP_ASPECT);
+// Width matches the IT card (420). Height derived from the laptop's
+// natural aspect ratio (330/195 ≈ 1.692) so the bezel reads as a real laptop.
+const LAPTOP_W = 420;
+const LAPTOP_H = Math.round(LAPTOP_W * (195 / 330));
 
 type Props = {
   /** Scroll runway in vh. Longer = slower zoom. @default 250 */
@@ -118,6 +117,7 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
             left: `${cxPct}%`,
             top: `${cyPct}%`,
             width: LAPTOP_W,
+            height: LAPTOP_H,
             transform: `translate(-50%, -50%) scale(${scale})`,
             transformOrigin: "center center",
             zIndex: 10,
