@@ -124,7 +124,7 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
           }}
         >
           <Laptop width={LAPTOP_W} height={LAPTOP_H} dark={dark} baseVisible={true}>
-            <SeoLaptopMockup />
+            <SeoLaptopMockup active={progress >= 0.95} />
           </Laptop>
         </div>
       </div>

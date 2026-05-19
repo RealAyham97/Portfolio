@@ -2,43 +2,43 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// ── Constants ──────────────────────────────────────────────────────────
+// ── Data ─────────────────────────────────────────────────────────────────
 const QUERY = "Aiham Al Rawashdeh";
 const SUGGESTIONS = [
   "aiham al rawashdeh",
-  "aiham al rawashdeh linkedin",
   "aiham al rawashdeh portfolio",
-  "aiham al rawashdeh github",
+  "aiham al rawashdeh linkedin",
+  "aiham al rawashdeh seo",
 ];
-const G_BLUE = "#4285F4";
-const G_RED = "#EA4335";
-const G_YELLOW = "#FBBC04";
-const G_GREEN = "#34A853";
-const G_GRAY_TEXT = "#202124";
-const G_GRAY_MUTED = "#70757a";
-const SERP_TITLE_BLUE = "#1a0dab";
-const SERP_URL_GRAY = "#4d5156";
-const SERP_VISITED_PURPLE = "#681da8";
-const GOOGLE_FONT = '"Trebuchet MS", "Product Sans", Arial, sans-serif';
 
+// ── Google dark-mode palette ─────────────────────────────────────────────
+const BG = "#202124";
+const SEARCH_BG = "#303134";
+const BUTTON_BG = "#303134";
+const TEXT = "#e8eaed";
+const MUTED = "#9aa0a6";
+const FAINT_BORDER = "#3c4043";
+const LINK_BLUE = "#8ab4f8";
+const VISITED = "#c58af9";
+const ACCENT_RED = "#ea4335";
+const FOOTER_BG = "#171717";
+const HOVER_BG = "rgba(138,180,248,0.08)";
+const GOOGLE_FONT = '"Product Sans", "Trebuchet MS", Arial, sans-serif';
+
+// ── Phases ───────────────────────────────────────────────────────────────
 type Phase =
-  | "homepage" // empty search, cursor blinking in input
-  | "typing" // chars being typed
-  | "type-done" // typing finished, brief pause
-  | "move-to-search" // pointer moving to Google Search button
-  | "clicking-search" // pointer click + button press
-  | "serp" // results page shown
-  | "move-to-result" // pointer moving to my result
-  | "clicking-result" // pointer click + link press
-  | "site"; // my actual site mock shown
+  | "homepage"
+  | "typing"
+  | "type-done"
+  | "move-to-search"
+  | "clicking-search"
+  | "serp"
+  | "move-to-result"
+  | "clicking-result"
+  | "flash-white"
+  | "site";
 
-// ── Helpers ────────────────────────────────────────────────────────────
-function isReducedMotion(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-// ── Cursor SVG ─────────────────────────────────────────────────────────
+// ── Pointer cursor SVG ───────────────────────────────────────────────────
 function PointerCursor({ pressed }: { pressed: boolean }) {
   return (
     <svg
@@ -49,7 +49,7 @@ function PointerCursor({ pressed }: { pressed: boolean }) {
         display: "block",
         transform: pressed ? "scale(0.9)" : "scale(1)",
         transition: "transform 0.12s ease-out",
-        filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
+        filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.6))",
       }}
       aria-hidden
     >
@@ -65,159 +65,132 @@ function PointerCursor({ pressed }: { pressed: boolean }) {
   );
 }
 
-// ── Google Wordmark ────────────────────────────────────────────────────
-function GoogleWordmark({ size = "6em" }: { size?: string }) {
+// ── White Google wordmark (dark-mode variant uses solid white) ───────────
+function GoogleWordmark({ size }: { size: string }) {
   return (
     <span
       style={{
         fontFamily: GOOGLE_FONT,
-        fontWeight: 400,
+        fontWeight: 500,
         fontSize: size,
         letterSpacing: "-0.04em",
         lineHeight: 1,
+        color: "#ffffff",
+        userSelect: "none",
       }}
     >
-      <span style={{ color: G_BLUE }}>G</span>
-      <span style={{ color: G_RED }}>o</span>
-      <span style={{ color: G_YELLOW }}>o</span>
-      <span style={{ color: G_BLUE }}>g</span>
-      <span style={{ color: G_GREEN }}>l</span>
-      <span style={{ color: G_RED }}>e</span>
+      Google
     </span>
   );
 }
 
-// ── Main component ─────────────────────────────────────────────────────
-export function SeoLaptopMockup() {
+// ── Main component ───────────────────────────────────────────────────────
+type Props = {
+  /** True once the laptop has reached (or nearly reached) its full zoom. */
+  active: boolean;
+};
+
+export function SeoLaptopMockup({ active }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("homepage");
   const [typed, setTyped] = useState("");
-  // Cursor position in % of the screen container.
   const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null);
   const [reduced, setReduced] = useState(false);
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    setReduced(isReducedMotion());
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
+  // IntersectionObserver on the mockup root — tracks whether laptop screen is visible.
   useEffect(() => {
-    if (!rootRef.current) return;
+    const el = rootRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          setInView(e.isIntersecting && e.intersectionRatio >= 0.5);
+        }
+      },
+      { threshold: [0, 0.5, 1] },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
+  // Sequence runner: fires only when laptop is in view AND parent says "active"
+  // (i.e. zoom has completed). Resets on either condition becoming false.
+  useEffect(() => {
     if (reduced) {
-      // Skip animation, freeze on the SERP with my site highlighted.
+      // Static-image fallback: show the SERP with my site highlighted, since
+      // that's the frame that best conveys "ranked #1 for my name".
       setTyped(QUERY);
       setPhase("serp");
       setCursor(null);
       return;
     }
 
-    const el = rootRef.current;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    let running = false;
-
-    const cancel = () => {
-      for (const t of timers) clearTimeout(t);
-      timers.length = 0;
-    };
-
-    const reset = () => {
-      cancel();
+    const shouldRun = active && inView;
+    if (!shouldRun) {
       setPhase("homepage");
       setTyped("");
       setCursor(null);
-    };
+      return;
+    }
 
-    const run = () => {
-      if (running) return;
-      running = true;
-      reset();
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    setPhase("homepage");
+    setTyped("");
+    setCursor(null);
 
-      // 0.8s: start typing
-      timers.push(
-        setTimeout(() => {
-          setPhase("typing");
-          let i = 0;
-          const typeNext = () => {
-            if (i >= QUERY.length) {
-              setPhase("type-done");
-              // Show pointer near search box, then move to "Google Search" button
-              timers.push(
-                setTimeout(() => {
-                  setCursor({ x: 70, y: 55 });
-                  setPhase("move-to-search");
-                }, 350),
-              );
-              timers.push(
-                setTimeout(() => {
-                  setCursor({ x: 41, y: 73 });
-                }, 450),
-              );
-              timers.push(
-                setTimeout(() => {
-                  setPhase("clicking-search");
-                }, 1500),
-              );
-              timers.push(
-                setTimeout(() => {
-                  setPhase("serp");
-                  setCursor(null);
-                }, 1850),
-              );
-              // SERP arrives — move pointer down to my result
-              timers.push(
-                setTimeout(() => {
-                  setCursor({ x: 70, y: 22 });
-                  setPhase("move-to-result");
-                }, 2700),
-              );
-              timers.push(
-                setTimeout(() => {
-                  setCursor({ x: 18, y: 58 });
-                }, 2800),
-              );
-              timers.push(
-                setTimeout(() => {
-                  setPhase("clicking-result");
-                }, 4000),
-              );
-              timers.push(
-                setTimeout(() => {
-                  setPhase("site");
-                }, 4400),
-              );
-              return;
-            }
-            const c = QUERY[i];
-            i++;
-            setTyped(QUERY.slice(0, i));
-            const base = 55 + Math.random() * 45;
-            const delay = c === " " ? base + 130 : base;
-            timers.push(setTimeout(typeNext, delay));
-          };
-          typeNext();
-        }, 800),
-      );
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            run();
-          } else if (!entry.isIntersecting) {
-            running = false;
-            reset();
+    timers.push(
+      setTimeout(() => {
+        setPhase("typing");
+        let i = 0;
+        const typeNext = () => {
+          if (i >= QUERY.length) {
+            setPhase("type-done");
+            timers.push(
+              setTimeout(() => {
+                setCursor({ x: 70, y: 55 });
+                setPhase("move-to-search");
+              }, 350),
+            );
+            timers.push(setTimeout(() => setCursor({ x: 41, y: 73 }), 450));
+            timers.push(setTimeout(() => setPhase("clicking-search"), 1500));
+            timers.push(
+              setTimeout(() => {
+                setPhase("serp");
+                setCursor(null);
+              }, 1850),
+            );
+            timers.push(
+              setTimeout(() => {
+                setCursor({ x: 70, y: 24 });
+                setPhase("move-to-result");
+              }, 2700),
+            );
+            timers.push(setTimeout(() => setCursor({ x: 18, y: 58 }), 2800));
+            timers.push(setTimeout(() => setPhase("clicking-result"), 4000));
+            timers.push(setTimeout(() => setPhase("flash-white"), 4400));
+            timers.push(setTimeout(() => setPhase("site"), 4650));
+            return;
           }
-        }
-      },
-      { threshold: [0, 0.5, 1] },
+          const c = QUERY[i];
+          i++;
+          setTyped(QUERY.slice(0, i));
+          const base = 55 + Math.random() * 45;
+          const delay = c === " " ? base + 130 : base;
+          timers.push(setTimeout(typeNext, delay));
+        };
+        typeNext();
+      }, 800),
     );
-    observer.observe(el);
+
     return () => {
-      observer.disconnect();
-      cancel();
+      for (const t of timers) clearTimeout(t);
     };
-  }, [reduced]);
+  }, [active, inView, reduced]);
 
   const onHomepage =
     phase === "homepage" ||
@@ -227,13 +200,7 @@ export function SeoLaptopMockup() {
     phase === "clicking-search";
   const onSerp = phase === "serp" || phase === "move-to-result" || phase === "clicking-result";
   const onSite = phase === "site";
-
-  const caretBlink = phase === "homepage";
-  const showAutocomplete =
-    phase === "typing" || phase === "type-done" || phase === "move-to-search";
-  const searchPressed = phase === "clicking-search";
-  const resultHover = phase === "move-to-result" || phase === "clicking-result";
-  const resultPressed = phase === "clicking-result";
+  const onFlash = phase === "flash-white";
 
   return (
     <div
@@ -241,24 +208,35 @@ export function SeoLaptopMockup() {
       style={{
         position: "absolute",
         inset: 0,
-        background: "#ffffff",
-        color: G_GRAY_TEXT,
-        fontFamily: "Arial, Helvetica, sans-serif",
+        background: BG,
+        color: TEXT,
+        fontFamily: 'Roboto, Arial, "Helvetica Neue", sans-serif',
         overflow: "hidden",
       }}
     >
       {onHomepage && (
         <HomepageView
           typed={typed}
-          caretBlink={caretBlink}
-          showAutocomplete={showAutocomplete}
-          searchPressed={searchPressed}
+          caretBlink={phase === "homepage"}
+          showAutocomplete={
+            phase === "typing" || phase === "type-done" || phase === "move-to-search"
+          }
+          searchPressed={phase === "clicking-search"}
         />
       )}
-      {onSerp && <SerpView query={QUERY} resultHover={resultHover} resultPressed={resultPressed} />}
+      {onSerp && (
+        <SerpView
+          query={QUERY}
+          resultHover={phase === "move-to-result" || phase === "clicking-result"}
+          resultPressed={phase === "clicking-result"}
+        />
+      )}
       {onSite && <SiteView />}
+      {onFlash && (
+        <div style={{ position: "absolute", inset: 0, background: "#ffffff", zIndex: 50 }} />
+      )}
 
-      {/* Cursor overlay (above everything) */}
+      {/* Cursor overlay */}
       {cursor && (
         <div
           style={{
@@ -278,7 +256,7 @@ export function SeoLaptopMockup() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Homepage view
+// Homepage view (dark mode)
 // ─────────────────────────────────────────────────────────────────────────
 function HomepageView({
   typed,
@@ -292,24 +270,17 @@ function HomepageView({
   searchPressed: boolean;
 }) {
   return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Top utility row */}
+    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
+      {/* Top-right utility */}
       <div
         style={{
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
-          gap: "1.2em",
-          padding: "1em 1.4em 0",
-          fontSize: "0.85em",
-          color: G_GRAY_TEXT,
+          gap: "1.4em",
+          padding: "1em 1.6em 0",
+          fontSize: "0.9em",
+          color: TEXT,
         }}
       >
         <span>Gmail</span>
@@ -318,9 +289,9 @@ function HomepageView({
         <span
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 0.32em)",
-            gridTemplateRows: "repeat(3, 0.32em)",
-            gap: "0.12em",
+            gridTemplateColumns: "repeat(3, 0.3em)",
+            gridTemplateRows: "repeat(3, 0.3em)",
+            gap: "0.18em",
           }}
           aria-hidden
         >
@@ -328,34 +299,35 @@ function HomepageView({
             <span
               key={`dot-${i.toString()}`}
               style={{
-                width: "0.32em",
-                height: "0.32em",
+                width: "0.3em",
+                height: "0.3em",
                 borderRadius: 999,
-                background: "#5f6368",
+                background: TEXT,
               }}
             />
           ))}
         </span>
-        {/* Account circle */}
+        {/* Account avatar */}
         <span
           style={{
-            width: "1.6em",
-            height: "1.6em",
+            width: "1.7em",
+            height: "1.7em",
             borderRadius: 999,
-            background: G_BLUE,
+            background: "linear-gradient(135deg, #5b6776 0%, #2c3340 100%)",
             color: "#fff",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
             fontWeight: 600,
             fontSize: "0.85em",
+            border: "1px solid rgba(255,255,255,0.06)",
           }}
         >
           A
         </span>
       </div>
 
-      {/* Logo + search */}
+      {/* Center column */}
       <div
         style={{
           flex: 1,
@@ -363,45 +335,36 @@ function HomepageView({
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          paddingBottom: "6%",
-          gap: "1.6em",
+          paddingBottom: "8%",
+          gap: "1.4em",
           position: "relative",
         }}
       >
-        <GoogleWordmark />
+        <GoogleWordmark size="5.5em" />
 
-        {/* Search box (with optional autocomplete sticking out below) */}
+        {/* Search box */}
         <div style={{ position: "relative", width: "62%", maxWidth: "640px" }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               gap: "0.7em",
-              padding: "0.55em 1em",
+              padding: "0.55em 0.6em 0.55em 1em",
               borderRadius: showAutocomplete ? "1.2em 1.2em 0 0" : "999px",
-              background: "#ffffff",
-              border: "1px solid #dfe1e5",
-              boxShadow: "0 0.1em 0.4em rgba(32,33,36,0.06)",
+              background: SEARCH_BG,
+              border: `1px solid ${FAINT_BORDER}`,
               borderBottom: showAutocomplete ? "1px solid transparent" : undefined,
             }}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#9aa0a6"
-              strokeWidth={2}
-              style={{ width: "1em", height: "1em", flexShrink: 0 }}
-              aria-hidden
-            >
-              <title>search</title>
-              <circle cx="11" cy="11" r="7" />
-              <line x1="20" y1="20" x2="16.65" y2="16.65" />
-            </svg>
+            {/* "+" icon */}
+            <PlusIcon />
+
+            {/* Input area */}
             <span
               style={{
                 flex: 1,
                 fontSize: "0.95em",
-                color: typed ? G_GRAY_TEXT : G_GRAY_MUTED,
+                color: typed ? TEXT : MUTED,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
               }}
@@ -412,41 +375,23 @@ function HomepageView({
                   display: "inline-block",
                   width: 1,
                   height: "1em",
-                  background: G_GRAY_TEXT,
+                  background: TEXT,
                   marginLeft: 1,
                   verticalAlign: "middle",
                   animation: caretBlink ? "seoCaretBlink 1s steps(1) infinite" : "none",
                 }}
               />
             </span>
+
             {/* Mic icon */}
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              style={{ width: "1em", height: "1em" }}
-              aria-hidden
-            >
-              <title>microphone</title>
-              <path d="M12 14a3 3 0 003-3V6a3 3 0 10-6 0v5a3 3 0 003 3z" fill={G_BLUE} />
-              <path
-                d="M19 11a7 7 0 01-14 0M12 18v3"
-                stroke={G_GRAY_TEXT}
-                strokeWidth={1.6}
-                strokeLinecap="round"
-                fill="none"
-              />
-            </svg>
+            <MicIcon />
             {/* Lens icon */}
-            <svg viewBox="0 0 24 24" style={{ width: "1em", height: "1em" }} aria-hidden>
-              <title>lens</title>
-              <circle cx="12" cy="12" r="3" fill={G_YELLOW} />
-              <circle cx="12" cy="6.5" r="1.5" fill={G_RED} />
-              <circle cx="17" cy="14.5" r="1.5" fill={G_GREEN} />
-              <circle cx="7" cy="14.5" r="1.5" fill={G_BLUE} />
-            </svg>
+            <LensIcon />
+            {/* AI Mode pill */}
+            <AiModePill />
           </div>
 
-          {/* Autocomplete dropdown */}
+          {/* Autocomplete */}
           {showAutocomplete && (
             <div
               style={{
@@ -454,14 +399,15 @@ function HomepageView({
                 left: 0,
                 right: 0,
                 top: "100%",
-                background: "#ffffff",
-                border: "1px solid #dfe1e5",
-                borderTop: "1px solid #eee",
+                background: SEARCH_BG,
+                border: `1px solid ${FAINT_BORDER}`,
+                borderTop: "1px solid rgba(255,255,255,0.06)",
                 borderRadius: "0 0 1.2em 1.2em",
-                boxShadow: "0 0.4em 0.6em rgba(32,33,36,0.1)",
+                boxShadow: "0 0.6em 0.8em rgba(0,0,0,0.4)",
                 paddingBottom: "0.4em",
                 fontSize: "0.95em",
                 zIndex: 5,
+                overflow: "hidden",
               }}
             >
               {SUGGESTIONS.map((s, i) => (
@@ -470,24 +416,13 @@ function HomepageView({
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.7em",
-                    padding: "0.4em 1em",
-                    color: G_GRAY_TEXT,
-                    background: i === 0 ? "#f5f5f5" : "transparent",
+                    gap: "0.8em",
+                    padding: "0.45em 1em",
+                    color: TEXT,
+                    background: i === 0 ? "rgba(255,255,255,0.04)" : "transparent",
                   }}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={G_GRAY_MUTED}
-                    strokeWidth={2}
-                    style={{ width: "0.9em", height: "0.9em", flexShrink: 0 }}
-                    aria-hidden
-                  >
-                    <title>history</title>
-                    <circle cx="11" cy="11" r="7" />
-                    <line x1="20" y1="20" x2="16.65" y2="16.65" />
-                  </svg>
+                  <SmallLensIcon />
                   <span>{s}</span>
                 </div>
               ))}
@@ -501,14 +436,14 @@ function HomepageView({
             type="button"
             tabIndex={-1}
             style={{
-              padding: "0.6em 1em",
-              borderRadius: 4,
-              background: "#f6f6f7",
+              padding: "0.65em 1em",
+              borderRadius: 8,
+              background: BUTTON_BG,
               border: "1px solid transparent",
-              fontSize: "0.75em",
-              color: "#3c4043",
+              fontSize: "0.78em",
+              color: TEXT,
               transform: searchPressed ? "scale(0.97)" : "scale(1)",
-              boxShadow: searchPressed ? "0 0 0 2px rgba(66,133,244,0.35)" : "0 0 0 0 transparent",
+              boxShadow: searchPressed ? "0 0 0 2px rgba(138,180,248,0.4)" : "0 0 0 0 transparent",
               transition: "transform 0.12s ease-out, box-shadow 0.12s ease-out",
               fontFamily: "inherit",
               cursor: "default",
@@ -520,12 +455,12 @@ function HomepageView({
             type="button"
             tabIndex={-1}
             style={{
-              padding: "0.6em 1em",
-              borderRadius: 4,
-              background: "#f6f6f7",
+              padding: "0.65em 1em",
+              borderRadius: 8,
+              background: BUTTON_BG,
               border: "1px solid transparent",
-              fontSize: "0.75em",
-              color: "#3c4043",
+              fontSize: "0.78em",
+              color: TEXT,
               fontFamily: "inherit",
               cursor: "default",
             }}
@@ -534,32 +469,43 @@ function HomepageView({
           </button>
         </div>
 
-        <div style={{ marginTop: "0.6em", fontSize: "0.7em", color: G_GRAY_MUTED }}>
-          Google offered in: عربي · Français · Español
+        {/* "New!" promo line */}
+        <div
+          style={{
+            marginTop: "0.7em",
+            fontSize: "0.78em",
+            color: TEXT,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.3em",
+          }}
+        >
+          <span style={{ color: ACCENT_RED, fontWeight: 700 }}>New!</span>
+          <span>Learn practical AI skills for any job by getting a</span>
+          <span style={{ color: LINK_BLUE }}>Google certificate</span>
+          <span>today</span>
+          <span aria-hidden>💡</span>
+        </div>
+
+        {/* Language offer */}
+        <div style={{ marginTop: "0.2em", fontSize: "0.78em", color: MUTED }}>
+          Google offered in:{" "}
+          <span style={{ color: LINK_BLUE, textDecoration: "underline" }}>العربية</span>
         </div>
       </div>
 
-      {/* Footer */}
+      {/* Footer bar */}
       <div
         style={{
-          padding: "0.7em 1.4em",
-          fontSize: "0.65em",
-          color: G_GRAY_MUTED,
-          background: "#f2f2f3",
-          borderTop: "1px solid #ececec",
-          display: "flex",
-          justifyContent: "space-between",
+          padding: "0.7em 1.6em",
+          fontSize: "0.78em",
+          color: TEXT,
+          background: FOOTER_BG,
+          borderTop: `1px solid ${FAINT_BORDER}`,
           flexShrink: 0,
         }}
       >
-        <div>Jordan</div>
-        <div style={{ display: "flex", gap: "1.2em" }}>
-          <span>Advertising</span>
-          <span>Business</span>
-          <span>How Search works</span>
-          <span>Privacy</span>
-          <span>Terms</span>
-        </div>
+        Jordan
       </div>
 
       <style>
@@ -569,8 +515,99 @@ function HomepageView({
   );
 }
 
+// ── Small icon helpers ────────────────────────────────────────────────────
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em", flexShrink: 0 }} aria-hidden>
+      <title>add</title>
+      <path
+        d="M12 5v14M5 12h14"
+        stroke={MUTED}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+function MicIcon() {
+  return (
+    <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em", flexShrink: 0 }} aria-hidden>
+      <title>mic</title>
+      <path d="M12 14a3 3 0 003-3V6a3 3 0 10-6 0v5a3 3 0 003 3z" fill={TEXT} />
+      <path
+        d="M19 11a7 7 0 01-14 0M12 18v3"
+        stroke={TEXT}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+function LensIcon() {
+  return (
+    <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em", flexShrink: 0 }} aria-hidden>
+      <title>lens</title>
+      <rect x="3" y="6" width="18" height="14" rx="2" fill="none" stroke={TEXT} strokeWidth="1.6" />
+      <circle cx="12" cy="13" r="3.5" fill="none" stroke={TEXT} strokeWidth="1.6" />
+      <circle cx="17.5" cy="9.5" r="0.8" fill={TEXT} />
+    </svg>
+  );
+}
+
+function AiModePill() {
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.3em",
+        padding: "0.4em 0.8em",
+        borderRadius: 999,
+        background: "rgba(138,180,248,0.12)",
+        color: LINK_BLUE,
+        fontSize: "0.78em",
+        flexShrink: 0,
+        fontWeight: 500,
+      }}
+    >
+      <SparkIcon />
+      AI Mode
+    </span>
+  );
+}
+
+function SparkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" style={{ width: "0.9em", height: "0.9em" }} aria-hidden>
+      <title>spark</title>
+      <path
+        d="M12 2 L13.5 9.5 L21 11 L13.5 12.5 L12 20 L10.5 12.5 L3 11 L10.5 9.5 Z"
+        fill={LINK_BLUE}
+      />
+    </svg>
+  );
+}
+
+function SmallLensIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      style={{ width: "0.85em", height: "0.85em", flexShrink: 0 }}
+      aria-hidden
+    >
+      <title>search</title>
+      <circle cx="11" cy="11" r="7" fill="none" stroke={MUTED} strokeWidth="2" />
+      <line x1="20" y1="20" x2="16.65" y2="16.65" stroke={MUTED} strokeWidth="2" />
+    </svg>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────
-// SERP view
+// SERP view (dark mode)
 // ─────────────────────────────────────────────────────────────────────────
 function SerpView({
   query,
@@ -588,8 +625,8 @@ function SerpView({
         inset: 0,
         display: "flex",
         flexDirection: "column",
-        background: "#ffffff",
-        color: G_GRAY_TEXT,
+        background: BG,
+        color: TEXT,
         animation: "seoSerpFadeIn 0.25s ease-out",
       }}
     >
@@ -600,50 +637,63 @@ function SerpView({
           alignItems: "center",
           gap: "1.4em",
           padding: "0.8em 1.4em",
-          borderBottom: "1px solid #ebebeb",
+          borderBottom: `1px solid ${FAINT_BORDER}`,
         }}
       >
         <GoogleWordmark size="1.8em" />
         <div
           style={{
             flex: 1,
-            maxWidth: "32em",
+            maxWidth: "34em",
             display: "flex",
             alignItems: "center",
             gap: "0.7em",
             padding: "0.45em 1em",
-            border: "1px solid #dfe1e5",
+            border: `1px solid ${FAINT_BORDER}`,
             borderRadius: 999,
-            background: "#fff",
-            boxShadow: "0 0.05em 0.2em rgba(32,33,36,0.04)",
+            background: SEARCH_BG,
           }}
         >
-          <span style={{ fontSize: "0.85em", color: G_GRAY_TEXT, flex: 1 }}>{query}</span>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={G_BLUE}
-            strokeWidth={2}
-            style={{ width: "1em", height: "1em" }}
-            aria-hidden
-          >
-            <title>search</title>
-            <circle cx="11" cy="11" r="7" />
-            <line x1="20" y1="20" x2="16.65" y2="16.65" />
-          </svg>
+          <span style={{ fontSize: "0.88em", color: TEXT, flex: 1 }}>{query}</span>
+          <MicIcon />
+          <LensIcon />
+          <AiModePill />
         </div>
+        {/* Apps + avatar */}
         <span
           style={{
-            width: "1.6em",
-            height: "1.6em",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 0.3em)",
+            gridTemplateRows: "repeat(3, 0.3em)",
+            gap: "0.18em",
+          }}
+          aria-hidden
+        >
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span
+              key={`tbdot-${i.toString()}`}
+              style={{
+                width: "0.3em",
+                height: "0.3em",
+                borderRadius: 999,
+                background: TEXT,
+              }}
+            />
+          ))}
+        </span>
+        <span
+          style={{
+            width: "1.7em",
+            height: "1.7em",
             borderRadius: 999,
-            background: G_BLUE,
+            background: "linear-gradient(135deg, #5b6776 0%, #2c3340 100%)",
             color: "#fff",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
             fontWeight: 600,
             fontSize: "0.85em",
+            border: "1px solid rgba(255,255,255,0.06)",
           }}
         >
           A
@@ -657,8 +707,8 @@ function SerpView({
           gap: "1.6em",
           padding: "0.5em 1.4em 0",
           fontSize: "0.78em",
-          color: G_GRAY_MUTED,
-          borderBottom: "1px solid #ebebeb",
+          color: MUTED,
+          borderBottom: `1px solid ${FAINT_BORDER}`,
         }}
       >
         {[
@@ -673,8 +723,8 @@ function SerpView({
             key={t.label}
             style={{
               padding: "0.4em 0 0.55em",
-              color: t.active ? G_BLUE : G_GRAY_MUTED,
-              borderBottom: t.active ? `3px solid ${G_BLUE}` : "3px solid transparent",
+              color: t.active ? LINK_BLUE : MUTED,
+              borderBottom: t.active ? `3px solid ${LINK_BLUE}` : "3px solid transparent",
               fontWeight: t.active ? 500 : 400,
             }}
           >
@@ -696,14 +746,13 @@ function SerpView({
         <div
           style={{
             fontSize: "0.72em",
-            color: G_GRAY_MUTED,
+            color: MUTED,
             marginBottom: "0.6em",
           }}
         >
           About 12,400 results (0.42 seconds)
         </div>
 
-        {/* Sponsored ads */}
         <SponsoredAd
           domain="findpros.io"
           breadcrumb="findpros.io › directory"
@@ -719,10 +768,8 @@ function SerpView({
           color="#0a8a3b"
         />
 
-        {/* My result (highlighted #1 organic) */}
         <MyResult hover={resultHover} pressed={resultPressed} />
 
-        {/* Other organic results */}
         <OrganicResult
           favicon={
             <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
@@ -790,9 +837,7 @@ function SponsoredAd({
 }) {
   return (
     <div style={{ marginBottom: "1em" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5em" }}>
-        <span style={{ fontWeight: 700, fontSize: "0.85em" }}>Sponsored</span>
-      </div>
+      <div style={{ fontWeight: 700, fontSize: "0.85em", color: TEXT }}>Sponsored</div>
       <div
         style={{
           display: "flex",
@@ -818,14 +863,14 @@ function SponsoredAd({
           {domain.charAt(0).toUpperCase()}
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.05em" }}>
-          <span style={{ fontSize: "0.78em", color: G_GRAY_TEXT, fontWeight: 500 }}>{domain}</span>
-          <span style={{ fontSize: "0.7em", color: SERP_URL_GRAY }}>{breadcrumb}</span>
+          <span style={{ fontSize: "0.78em", color: TEXT, fontWeight: 500 }}>{domain}</span>
+          <span style={{ fontSize: "0.7em", color: MUTED }}>{breadcrumb}</span>
         </div>
       </div>
       <div
         style={{
           fontSize: "1.05em",
-          color: SERP_TITLE_BLUE,
+          color: LINK_BLUE,
           marginTop: "0.3em",
         }}
       >
@@ -834,7 +879,7 @@ function SponsoredAd({
       <div
         style={{
           fontSize: "0.82em",
-          color: SERP_URL_GRAY,
+          color: MUTED,
           lineHeight: 1.45,
           marginTop: "0.15em",
         }}
@@ -851,23 +896,22 @@ function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
       style={{
         marginTop: "0.6em",
         marginBottom: "1.4em",
-        padding: hover ? "0.5em" : "0.5em",
+        padding: "0.5em",
         marginLeft: "-0.5em",
-        background: hover ? "rgba(26,115,232,0.06)" : "transparent",
+        background: hover ? HOVER_BG : "transparent",
         borderRadius: 8,
         transition: "background 0.2s ease-out",
         transform: pressed ? "scale(0.997)" : "scale(1)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.5em" }}>
-        {/* Favicon */}
         <span
           style={{
             width: "1.5em",
             height: "1.5em",
             borderRadius: 999,
-            background: G_GRAY_TEXT,
-            color: "#ffffff",
+            background: TEXT,
+            color: BG,
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
@@ -880,18 +924,16 @@ function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
           A
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: "0.05em" }}>
-          <span style={{ fontSize: "0.82em", color: G_GRAY_TEXT, fontWeight: 500 }}>
+          <span style={{ fontSize: "0.82em", color: TEXT, fontWeight: 500 }}>
             Aiham AlRawashdeh
           </span>
-          <span style={{ fontSize: "0.7em", color: SERP_URL_GRAY }}>
-            https://www.aihamalrawashdeh.com
-          </span>
+          <span style={{ fontSize: "0.7em", color: MUTED }}>https://www.aihamalrawashdeh.com</span>
         </div>
       </div>
       <div
         style={{
           fontSize: "1.1em",
-          color: SERP_TITLE_BLUE,
+          color: LINK_BLUE,
           marginTop: "0.35em",
           textDecoration: hover ? "underline" : "none",
         }}
@@ -901,7 +943,7 @@ function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
       <div
         style={{
           fontSize: "0.82em",
-          color: SERP_URL_GRAY,
+          color: MUTED,
           lineHeight: 1.45,
           marginTop: "0.2em",
         }}
@@ -934,14 +976,14 @@ function OrganicResult({
       <div style={{ display: "flex", alignItems: "center", gap: "0.5em" }}>
         {favicon}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.05em" }}>
-          <span style={{ fontSize: "0.82em", color: G_GRAY_TEXT, fontWeight: 500 }}>{site}</span>
-          <span style={{ fontSize: "0.7em", color: SERP_URL_GRAY }}>{breadcrumb}</span>
+          <span style={{ fontSize: "0.82em", color: TEXT, fontWeight: 500 }}>{site}</span>
+          <span style={{ fontSize: "0.7em", color: MUTED }}>{breadcrumb}</span>
         </div>
       </div>
       <div
         style={{
           fontSize: "1.1em",
-          color: SERP_VISITED_PURPLE,
+          color: VISITED,
           marginTop: "0.3em",
           opacity: 0.9,
         }}
@@ -952,7 +994,7 @@ function OrganicResult({
       <div
         style={{
           fontSize: "0.82em",
-          color: SERP_URL_GRAY,
+          color: MUTED,
           lineHeight: 1.45,
           marginTop: "0.15em",
         }}
@@ -964,7 +1006,7 @@ function OrganicResult({
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Final view — stylized representation of my site after click
+// Site view — final frame (stylized version of my actual portfolio hero)
 // ─────────────────────────────────────────────────────────────────────────
 function SiteView() {
   return (
@@ -979,17 +1021,6 @@ function SiteView() {
         animation: "seoSiteFadeIn 0.4s ease-out",
       }}
     >
-      {/* Loading bar at top */}
-      <div
-        style={{
-          height: "2px",
-          background: G_BLUE,
-          animation: "seoLoadingBar 0.5s ease-out",
-          transformOrigin: "left center",
-        }}
-      />
-
-      {/* Mini nav */}
       <div
         style={{
           display: "flex",
@@ -1011,7 +1042,6 @@ function SiteView() {
         </div>
       </div>
 
-      {/* Hero */}
       <div
         style={{
           flex: 1,
@@ -1053,7 +1083,6 @@ function SiteView() {
 
       <style>{`
         @keyframes seoSiteFadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes seoLoadingBar { from { transform: scaleX(0) } 80% { transform: scaleX(0.7) } to { transform: scaleX(1) } }
       `}</style>
     </div>
   );
