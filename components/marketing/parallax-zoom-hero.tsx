@@ -2,8 +2,8 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
+import { SeoLaptopMockup } from "./SeoLaptopMockup";
 import { Laptop } from "./laptop";
-import { SearchScreen } from "./search-screen";
 
 // ── Helpers (same pattern as ParallaxItCard) ──────────────────────────────
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -124,7 +124,7 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
           }}
         >
           <Laptop width={LAPTOP_W} height={LAPTOP_H} dark={dark} baseVisible={true}>
-            <SearchScreen dark={dark} />
+            <SeoLaptopMockup />
           </Laptop>
         </div>
       </div>
