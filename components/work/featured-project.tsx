@@ -4,7 +4,7 @@ import { Reveal } from "../reveal";
 
 export function FeaturedProject({ project }: { project: Project }) {
   return (
-    <Reveal as="article" className="grid gap-8 md:grid-cols-[1.1fr_1fr] md:gap-12">
+    <Reveal as="article" className="grid gap-8 md:grid-cols-[1.1fr_1fr] md:gap-12 max-w-full overflow-hidden">
       <div className="space-y-5">
         <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
           Featured · {project.client ?? "Personal"}
@@ -44,7 +44,7 @@ export function FeaturedProject({ project }: { project: Project }) {
             alt={project.title}
             fill
             priority
-            className="object-contain"
+            className="object-cover"
             sizes="(max-width: 768px) 100vw, 600px"
           />
         ) : (

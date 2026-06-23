@@ -32,16 +32,27 @@ const SCALE_STOPS: Stop[] = [
   { at: 1.0, v: 1.5 },
 ];
 
-// Same position curve as the IT card.
-const CX_STOPS: Stop[] = [
+// ── Desktop stops ──
+const CX_DESKTOP: Stop[] = [
   { at: 0.0, v: 0.745 },
   { at: 0.5, v: 0.5 },
   { at: 1.0, v: 0.5 },
 ];
-const CY_STOPS: Stop[] = [
+const CY_DESKTOP: Stop[] = [
   { at: 0.0, v: 0.32 },
   { at: 0.5, v: 0.7 },
   { at: 1.0, v: 0.7 },
+];
+
+// ── Mobile stops: laptop starts centered below title ──
+const CX_MOBILE: Stop[] = [
+  { at: 0.0, v: 0.5 },
+  { at: 1.0, v: 0.5 },
+];
+const CY_MOBILE: Stop[] = [
+  { at: 0.0, v: 0.68 },
+  { at: 0.5, v: 0.68 },
+  { at: 1.0, v: 0.68 },
 ];
 
 // Fixed laptop dimensions at scale=1.
@@ -58,9 +69,18 @@ type Props = {
 export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
   const wrapRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   const { resolvedTheme } = useTheme();
   const dark = resolvedTheme === "dark";
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     let raf = 0;
@@ -86,9 +106,26 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
     };
   }, []);
 
-  const scale = interp(progress, SCALE_STOPS);
-  const cxPct = interp(progress, CX_STOPS) * 100;
-  const cyPct = interp(progress, CY_STOPS) * 100;
+  const cxStops = isMobile ? CX_MOBILE : CX_DESKTOP;
+  const cyStops = isMobile ? CY_MOBILE : CY_DESKTOP;
+  const scaleStops: Stop[] = isMobile
+    ? [{ at: 0, v: 1.0 }, { at: 1, v: 1.15 }]
+    : SCALE_STOPS;
+
+  const scale = interp(progress, scaleStops);
+  const cxPct = interp(progress, cxStops) * 100;
+  const cyPct = interp(progress, cyStops) * 100;
+
+  const [vw, setVw] = useState(LAPTOP_W + 48);
+  useEffect(() => {
+    const update = () => setVw(window.innerWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const w = isMobile ? Math.min(LAPTOP_W, vw - 48) : LAPTOP_W;
+  const h = Math.round(w * (195 / 330));
 
   return (
     <section
@@ -102,7 +139,7 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
         <div className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
           <h1
             className="font-display italic leading-none text-text/80"
-            style={{ fontSize: "clamp(3.5rem, 8vw, 5rem)" }}
+            style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
           >
             Digital
             <br />
@@ -116,14 +153,14 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
             position: "absolute",
             left: `${cxPct}%`,
             top: `${cyPct}%`,
-            width: LAPTOP_W,
-            height: LAPTOP_H,
+            width: w,
+            height: h,
             transform: `translate(-50%, -50%) scale(${scale})`,
             transformOrigin: "center center",
             zIndex: 10,
           }}
         >
-          <Laptop width={LAPTOP_W} height={LAPTOP_H} dark={dark} baseVisible={true}>
+          <Laptop width={w} height={h} dark={dark} baseVisible={true}>
             <SeoLaptopMockup active={progress >= 0.95} />
           </Laptop>
         </div>

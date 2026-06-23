@@ -86,7 +86,7 @@ export function SiteNav() {
               aria-expanded={open}
               aria-controls="mobile-nav"
               onClick={() => setOpen((o) => !o)}
-              className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-text-muted transition hover:text-text"
+              className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-text-muted transition hover:text-text"
             >
               {open ? <X size={16} /> : <Menu size={16} />}
             </button>

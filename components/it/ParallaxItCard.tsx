@@ -30,20 +30,27 @@ const SCALE_STOPS: Stop[] = [
   { at: 1.0, v: 1.5 },
 ];
 
-// Card center X (as a fraction of viewport width):
-// starts at the right-column position next to the title, ends centered.
-const CX_STOPS: Stop[] = [
+// ── Desktop stops ──
+const CX_DESKTOP: Stop[] = [
   { at: 0.0, v: 0.745 },
   { at: 0.5, v: 0.5 },
   { at: 1.0, v: 0.5 },
 ];
-
-// Card center Y (as a fraction of viewport height):
-// starts next to the title (matching its vertical center), ends below it.
-const CY_STOPS: Stop[] = [
+const CY_DESKTOP: Stop[] = [
   { at: 0.0, v: 0.32 },
   { at: 0.5, v: 0.7 },
   { at: 1.0, v: 0.7 },
+];
+
+// ── Mobile stops: card starts centered below title, stays centered ──
+const CX_MOBILE: Stop[] = [
+  { at: 0.0, v: 0.5 },
+  { at: 1.0, v: 0.5 },
+];
+const CY_MOBILE: Stop[] = [
+  { at: 0.0, v: 0.68 },
+  { at: 0.5, v: 0.68 },
+  { at: 1.0, v: 0.68 },
 ];
 
 type Props = {
@@ -54,6 +61,15 @@ type Props = {
 export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   const wrapRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     let raf = 0;
@@ -79,9 +95,15 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
     };
   }, []);
 
-  const scale = interp(progress, SCALE_STOPS);
-  const cxPct = interp(progress, CX_STOPS) * 100;
-  const cyPct = interp(progress, CY_STOPS) * 100;
+  const cxStops = isMobile ? CX_MOBILE : CX_DESKTOP;
+  const cyStops = isMobile ? CY_MOBILE : CY_DESKTOP;
+  const scaleStops: Stop[] = isMobile
+    ? [{ at: 0, v: 1.0 }, { at: 1, v: 1.15 }]
+    : SCALE_STOPS;
+
+  const scale = interp(progress, scaleStops);
+  const cxPct = interp(progress, cxStops) * 100;
+  const cyPct = interp(progress, cyStops) * 100;
 
   return (
     <section
@@ -95,7 +117,7 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
         <div className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
           <h1
             className="font-display italic leading-none text-text/80"
-            style={{ fontSize: "clamp(3.5rem, 8vw, 5rem)" }}
+            style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
           >
             IT
             <br />
@@ -109,7 +131,8 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
             position: "absolute",
             left: `${cxPct}%`,
             top: `${cyPct}%`,
-            width: 420,
+            width: isMobile ? "calc(100vw - 3rem)" : 420,
+            maxWidth: 420,
             transform: `translate(-50%, -50%) scale(${scale})`,
             transformOrigin: "center center",
             zIndex: 10,

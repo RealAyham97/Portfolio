@@ -22,7 +22,7 @@ export function KpiTile({ value, prefix = "", suffix = "", label }: Props) {
 
   return (
     <div ref={ref} className="border-t border-border pt-4">
-      <div className="font-mono text-4xl text-text md:text-5xl tabular-nums">
+      <div className="font-mono text-2xl text-text sm:text-4xl md:text-5xl tabular-nums">
         {prefix}
         {display}
         {suffix}
