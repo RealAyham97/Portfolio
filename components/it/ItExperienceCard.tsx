@@ -174,19 +174,11 @@ function fmtMonth(iso: string): string {
 
 export function ItExperienceCard() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [popoverSide, setPopoverSide] = useState<"above" | "below">("below");
   const barsRef = useRef<HTMLDivElement>(null);
   const active = hoveredIdx == null ? null : JOBS[hoveredIdx];
 
-  // Smart flip: choose the side with more viewport space when a bar is hovered.
   const setHover = (idx: number | null) => {
     setHoveredIdx(idx);
-    if (idx != null && barsRef.current) {
-      const rect = barsRef.current.getBoundingClientRect();
-      const spaceAbove = rect.top;
-      const spaceBelow = window.innerHeight - rect.bottom;
-      setPopoverSide(spaceAbove > spaceBelow ? "above" : "below");
-    }
   };
 
   const query = active
@@ -270,9 +262,7 @@ export function ItExperienceCard() {
             className="absolute z-20 rounded-lg border border-border bg-surface-1 p-3 pointer-events-none"
             style={{
               width: POPOVER_W_PX,
-              ...(popoverSide === "below"
-                ? { top: "calc(100% + 10px)" }
-                : { bottom: "calc(100% + 10px)" }),
+              bottom: "calc(100% + 10px)",
               left: `clamp(0px, calc(${barCenterPct}% - ${POPOVER_W_PX / 2}px), calc(100% - ${POPOVER_W_PX}px))`,
               boxShadow: "0 12px 32px -8px rgba(0, 0, 0, 0.55), 0 4px 12px -4px rgba(0, 0, 0, 0.4)",
             }}

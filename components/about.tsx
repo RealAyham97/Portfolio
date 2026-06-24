@@ -1,5 +1,11 @@
 import { about } from "@/content/about";
+import Link from "next/link";
 import { Reveal } from "./reveal";
+
+const routes = [
+  { href: "/it", label: "Websites, Design, & Dashboards" },
+  { href: "/marketing", label: "Paid ads, SEO, & Analytics" },
+] as const;
 
 export function About() {
   return (
@@ -18,11 +24,28 @@ export function About() {
             <p key={p}>{p}</p>
           ))}
         </Reveal>
-        <Reveal className="grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-1 md:gap-8">
+
+        <Reveal className="md:row-span-2 grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-1 md:gap-8">
           <AboutBlock label="Now" body={<p>{about.now}</p>} />
           <AboutBlock label="Past" body={<List items={about.past} />} />
           <AboutBlock label="Industries" body={<List items={about.industries} />} />
         </Reveal>
+
+        <div className="flex flex-col items-center gap-4 md:items-start">
+          <Reveal>
+            <p className="text-base text-text-muted">What are you looking for?</p>
+          </Reveal>
+          {routes.map((r) => (
+            <Reveal key={r.href}>
+              <Link
+                href={r.href}
+                className="inline-block rounded-full bg-accent px-8 py-3.5 text-center font-mono text-sm text-accent-fg transition hover:opacity-90"
+              >
+                {r.label}
+              </Link>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
