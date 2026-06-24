@@ -55,7 +55,7 @@ export function SiteNav() {
           {/* Desktop links */}
           <ul className="hidden md:flex items-center gap-1">
             {LINKS.map((l) => {
-              const isActive = l.href !== "#" && pathname === l.href;
+              const isActive = pathname === l.href;
               return (
                 <li key={l.label}>
                   <Link
@@ -103,7 +103,7 @@ export function SiteNav() {
           >
             <ul className="mx-auto max-w-6xl flex flex-col px-6 py-3 gap-1">
               {LINKS.map((l) => {
-                const isActive = l.href !== "#" && pathname === l.href;
+                const isActive = pathname === l.href;
                 return (
                   <li key={l.label}>
                     <Link
