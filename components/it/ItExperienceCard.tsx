@@ -92,7 +92,7 @@ const JOBS: Job[] = [
   {
     id: 5,
     company: "Freelancing",
-    role: "Analyst & Founder",
+    role: "Full-Stack Developer & Digital Marketer",
     location: "Remote",
     start: "2025-04",
     end: "Present",
