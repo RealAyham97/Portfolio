@@ -39,13 +39,13 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+// Contact details (email, phone) are intentionally kept out of the structured
+// data so they aren't exposed sitewide in page source. Reach out via /contact.
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: profile.name,
   jobTitle: profile.role,
-  email: profile.email,
-  telephone: profile.phone,
   url: SITE_URL,
   address: { "@type": "PostalAddress", addressLocality: "Amman", addressCountry: "JO" },
   sameAs: [profile.socials.linkedin],

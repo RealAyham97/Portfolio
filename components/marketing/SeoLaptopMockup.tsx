@@ -118,76 +118,93 @@ export function SeoLaptopMockup({ active }: Props) {
     return () => obs.disconnect();
   }, []);
 
-  // Sequence runner: fires only when laptop is in view AND parent says "active"
-  // (i.e. zoom has completed). Resets on either condition becoming false.
+  // Sequence runner. Plays once the laptop is zoomed in and in view, then loops
+  // so the story is always catchable instead of being a one-shot that's usually
+  // already over. Resets to the opening frame whenever it's not running.
   useEffect(() => {
     if (reduced) {
-      // Static-image fallback: show the SERP with my site highlighted, since
-      // that's the frame that best conveys "ranked #1 for my name".
+      // Reduced-motion fallback: skip straight to the payoff frame — the SERP
+      // with my result highlighted as the top organic hit (see render below).
       setTyped(QUERY);
       setPhase("serp");
       setCursor(null);
       return;
     }
 
-    const shouldRun = active && inView;
-    if (!shouldRun) {
+    if (!(active && inView)) {
       setPhase("homepage");
       setTyped("");
       setCursor(null);
       return;
     }
 
+    let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
-    setPhase("homepage");
-    setTyped("");
-    setCursor(null);
+    const wait = (ms: number) =>
+      new Promise<void>((resolve) => {
+        timers.push(setTimeout(resolve, ms));
+      });
 
-    timers.push(
-      setTimeout(() => {
+    const run = async () => {
+      while (!cancelled) {
+        // Opening frame: empty box, blinking caret, cursor resting below.
+        setPhase("homepage");
+        setTyped("");
+        setCursor({ x: 50, y: 86 });
+        await wait(1000);
+        if (cancelled) return;
+
+        // Type the query one keystroke at a time, with a human-ish rhythm.
         setPhase("typing");
-        let i = 0;
-        const typeNext = () => {
-          if (i >= QUERY.length) {
-            setPhase("type-done");
-            timers.push(
-              setTimeout(() => {
-                setCursor({ x: 70, y: 55 });
-                setPhase("move-to-search");
-              }, 350),
-            );
-            timers.push(setTimeout(() => setCursor({ x: 41, y: 73 }), 450));
-            timers.push(setTimeout(() => setPhase("clicking-search"), 1500));
-            timers.push(
-              setTimeout(() => {
-                setPhase("serp");
-                setCursor(null);
-              }, 1850),
-            );
-            timers.push(
-              setTimeout(() => {
-                setCursor({ x: 70, y: 24 });
-                setPhase("move-to-result");
-              }, 2700),
-            );
-            timers.push(setTimeout(() => setCursor({ x: 18, y: 58 }), 2800));
-            timers.push(setTimeout(() => setPhase("clicking-result"), 4000));
-            timers.push(setTimeout(() => setPhase("flash-white"), 4400));
-            timers.push(setTimeout(() => setPhase("site"), 4650));
-            return;
-          }
-          const c = QUERY[i];
-          i++;
+        for (let i = 1; i <= QUERY.length; i++) {
+          if (cancelled) return;
           setTyped(QUERY.slice(0, i));
-          const base = 55 + Math.random() * 45;
-          const delay = c === " " ? base + 130 : base;
-          timers.push(setTimeout(typeNext, delay));
-        };
-        typeNext();
-      }, 800),
-    );
+          const c = QUERY[i - 1];
+          const base = 95 + Math.random() * 75; // ~95–170ms per key
+          await wait(c === " " ? base + 120 : base);
+        }
+        setPhase("type-done");
+        await wait(550);
+        if (cancelled) return;
+
+        // Glide the cursor down to the Search button, then press it.
+        setPhase("move-to-search");
+        setCursor({ x: 41, y: 72 });
+        await wait(850);
+        if (cancelled) return;
+        setPhase("clicking-search");
+        await wait(320);
+        if (cancelled) return;
+
+        // Results load. Keep the cursor visible and walk it to my result
+        // along a continuous path instead of teleporting.
+        setPhase("serp");
+        setCursor({ x: 34, y: 40 });
+        await wait(750);
+        if (cancelled) return;
+        setPhase("move-to-result");
+        setCursor({ x: 19, y: 57 });
+        await wait(900);
+        if (cancelled) return;
+        setPhase("clicking-result");
+        await wait(520);
+        if (cancelled) return;
+
+        // Payoff: flash to my site and hold it long enough to register.
+        setPhase("flash-white");
+        await wait(220);
+        if (cancelled) return;
+        setPhase("site");
+        setCursor(null);
+        await wait(2400);
+        if (cancelled) return;
+      }
+    };
+
+    run();
 
     return () => {
+      cancelled = true;
       for (const t of timers) clearTimeout(t);
     };
   }, [active, inView, reduced]);
@@ -205,6 +222,7 @@ export function SeoLaptopMockup({ active }: Props) {
   return (
     <div
       ref={rootRef}
+      aria-hidden="true"
       style={{
         position: "absolute",
         inset: 0,
@@ -217,7 +235,7 @@ export function SeoLaptopMockup({ active }: Props) {
       {onHomepage && (
         <HomepageView
           typed={typed}
-          caretBlink={phase === "homepage"}
+          caretBlink={phase === "homepage" || phase === "type-done"}
           showAutocomplete={
             phase === "typing" || phase === "type-done" || phase === "move-to-search"
           }
@@ -227,7 +245,7 @@ export function SeoLaptopMockup({ active }: Props) {
       {onSerp && (
         <SerpView
           query={QUERY}
-          resultHover={phase === "move-to-result" || phase === "clicking-result"}
+          resultHover={phase === "move-to-result" || phase === "clicking-result" || reduced}
           resultPressed={phase === "clicking-result"}
         />
       )}
@@ -791,8 +809,8 @@ function SerpView({
           site="LinkedIn"
           breadcrumb="linkedin.com › in › aiham"
           url="https://www.linkedin.com/in/aihamalrawashdeh"
-          title="Aiham AlRawashdeh - Analyst &amp; Founder"
-          desc="Analyst &amp; Founder based in Amman, Jordan. Six years across aviation, consulting, and media. View profile, posts, and connections on LinkedIn."
+          title="Aiham AlRawashdeh - Full-Stack Developer &amp; Digital Marketer"
+          desc="Full-Stack Developer &amp; Digital Marketer based in Amman, Jordan. Builds web apps and runs data-driven campaigns. View profile, posts, and connections on LinkedIn."
         />
         <OrganicResult
           favicon={
@@ -900,8 +918,13 @@ function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
         marginLeft: "-0.5em",
         background: hover ? HOVER_BG : "transparent",
         borderRadius: 8,
-        transition: "background 0.2s ease-out",
+        transition: "background 0.2s ease-out, box-shadow 0.2s ease-out",
         transform: pressed ? "scale(0.997)" : "scale(1)",
+        boxShadow: pressed
+          ? "0 0 0 2px rgba(138,180,248,0.55)"
+          : hover
+            ? "0 0 0 1px rgba(138,180,248,0.28)"
+            : "0 0 0 0 transparent",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.5em" }}>
@@ -1059,7 +1082,7 @@ function SiteView() {
             letterSpacing: "0.1em",
           }}
         >
-          ANALYST &amp; FOUNDER · AMMAN, JORDAN
+          FULL-STACK DEVELOPER &amp; DIGITAL MARKETER · AMMAN, JORDAN
         </div>
         <div style={{ fontFamily: "monospace", fontSize: "0.8em", color: "#8a8a8a" }}>
           Hi, my name is

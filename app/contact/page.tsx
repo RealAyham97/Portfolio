@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { profile } from "@/content/profile";
 import type { Metadata } from "next";
-import { Linkedin, Mail, Phone } from "lucide-react";
+import { Linkedin } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -36,34 +36,12 @@ export default function ContactPage() {
                   Let's talk
                 </p>
                 <p className="text-text-muted leading-relaxed">
-                  Whether it's a project, a question, or just a hello, my inbox
-                  is open.
+                  Whether it's a project, a question, or just a hello, send a note with the form
+                  and I'll get back to you.
                 </p>
               </div>
 
               <ul className="space-y-4">
-                <li>
-                  <a
-                    href={`mailto:${profile.email}`}
-                    className="group flex items-center gap-3 text-sm text-text-muted transition hover:text-text"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border transition group-hover:border-accent">
-                      <Mail size={14} />
-                    </span>
-                    {profile.email}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href={`tel:${profile.phone.replace(/\s/g, "")}`}
-                    className="group flex items-center gap-3 text-sm text-text-muted transition hover:text-text"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border transition group-hover:border-accent">
-                      <Phone size={14} />
-                    </span>
-                    {profile.phone}
-                  </a>
-                </li>
                 <li>
                   <a
                     href={profile.socials.linkedin}

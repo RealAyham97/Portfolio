@@ -1,6 +1,5 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { SeoLaptopMockup } from "./SeoLaptopMockup";
 import { Laptop } from "./laptop";
@@ -71,9 +70,6 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
   const [progress, setProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { resolvedTheme } = useTheme();
-  const dark = resolvedTheme === "dark";
-
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     setIsMobile(mq.matches);
@@ -138,14 +134,21 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
         {/* Title at top-left — Contact-style heading section */}
         <div className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
           <h1
+            aria-label="Digital Marketing"
             className="font-display italic leading-none text-text/80"
             style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
           >
-            Digital
+            Digital{" "}
             <br />
             Marketing
           </h1>
         </div>
+
+        {/* Text alternative for the decorative SERP animation below */}
+        <p className="sr-only">
+          Decorative animation: a Google search for the name Aiham AlRawashdeh, with this portfolio
+          ranking first above LinkedIn and GitHub results.
+        </p>
 
         {/* Laptop — absolutely positioned, scales via CSS transform like the IT card */}
         <div
@@ -160,8 +163,8 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
             zIndex: 10,
           }}
         >
-          <Laptop width={w} height={h} dark={dark} baseVisible={true}>
-            <SeoLaptopMockup active={progress >= 0.95} />
+          <Laptop width={w} height={h} dark={false} baseVisible={true}>
+            <SeoLaptopMockup active={progress >= 0.85} />
           </Laptop>
         </div>
       </div>
