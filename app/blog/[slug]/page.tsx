@@ -2,7 +2,9 @@ import { MarkdownBody } from "@/components/markdown-body";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { profile } from "@/content/profile";
 import { posts } from "@/content/posts";
+import { SITE_URL, pageMeta } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,11 +19,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = posts.find((p) => p.slug === slug);
   if (!post) return {};
-  return {
+  return pageMeta({
     title: post.title,
     description: post.description,
-    openGraph: { title: post.title, description: post.description, type: "article" },
-  };
+    path: `/blog/${post.slug}`,
+    type: "article",
+    publishedTime: post.date,
+  });
 }
 
 function formatDate(iso: string) {
@@ -37,8 +41,27 @@ export default async function BlogPost({ params }: Props) {
   const post = posts.find((p) => p.slug === slug);
   if (!post) notFound();
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { "@type": "Person", name: profile.name, url: SITE_URL },
+    publisher: { "@type": "Person", name: profile.name, url: SITE_URL },
+    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+    image: `${SITE_URL}/opengraph-image`,
+    keywords: post.tags.join(", "),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: static, not user input
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <SiteNav />
       <main>
         <article className="mx-auto max-w-6xl px-6 pt-32 pb-12 md:pt-40 md:pb-16">

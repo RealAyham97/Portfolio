@@ -2,13 +2,15 @@ import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { posts } from "@/content/posts";
-import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Blog",
-  description: "Writing on data, marketing, and building things that work.",
-};
+  description:
+    "Writing on development, data, and digital marketing, with a focus on the MENA region.",
+  path: "/blog",
+});
 
 function formatDate(iso: string) {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {

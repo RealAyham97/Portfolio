@@ -4,12 +4,14 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { Stack } from "@/components/stack";
 import { SelectedWork } from "@/components/work/selected-work";
-import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "IT Services",
-  description: "Foundry dashboards, automation, and business intelligence.",
-};
+  description:
+    "Web development, Power BI dashboards, business intelligence, and automation that turn your data into decisions.",
+  path: "/it",
+});
 
 const IT_STACK_CATEGORIES = ["Visualization", "Programming", "Automation & Cloud", "Tools"];
 

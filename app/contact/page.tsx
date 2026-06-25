@@ -3,13 +3,15 @@ import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { profile } from "@/content/profile";
-import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { Linkedin } from "lucide-react";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Contact",
-  description: "Get in touch with Aiham AlRawashdeh.",
-};
+  description:
+    "Get in touch with Aiham AlRawashdeh about web development, dashboards, and digital marketing projects, in Amman and remotely.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

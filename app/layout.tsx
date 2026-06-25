@@ -1,10 +1,16 @@
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { profile } from "@/content/profile";
+import { SITE_URL } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+
+const GITHUB_URL = "https://github.com/RealAyham97";
+// Home-page meta description: keyword-relevant, distinct from the hero tagline.
+const HOME_DESCRIPTION =
+  "Full-stack developer and digital marketer in Amman, Jordan. I build web apps, dashboards, and data-driven marketing that delivers measurable results.";
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
@@ -16,25 +22,25 @@ const display = Instrument_Serif({
   display: "swap",
 });
 
-const SITE_URL = "https://www.aihamalrawashdeh.com";
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: `${profile.name} · ${profile.role}`, template: `%s · ${profile.name}` },
-  description: profile.pitch,
-  alternates: { canonical: "/" },
+  description: HOME_DESCRIPTION,
+  // No canonical here on purpose: a blanket canonical would propagate to every
+  // child route and make each page look like a duplicate of the home page.
+  // The home page sets its own in app/page.tsx; other routes use pageMeta().
   openGraph: {
     type: "website",
-    url: SITE_URL,
+    url: "/",
     siteName: profile.name,
     title: `${profile.name} · ${profile.role}`,
-    description: profile.pitch,
+    description: HOME_DESCRIPTION,
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: `${profile.name} · ${profile.role}`,
-    description: profile.pitch,
+    description: HOME_DESCRIPTION,
   },
   robots: { index: true, follow: true },
 };
@@ -46,9 +52,18 @@ const personJsonLd = {
   "@type": "Person",
   name: profile.name,
   jobTitle: profile.role,
+  description: HOME_DESCRIPTION,
   url: SITE_URL,
   address: { "@type": "PostalAddress", addressLocality: "Amman", addressCountry: "JO" },
-  sameAs: [profile.socials.linkedin],
+  knowsAbout: [
+    "Full-stack development",
+    "Web development",
+    "Digital marketing",
+    "SEO",
+    "Data analytics",
+    "Business intelligence",
+  ],
+  sameAs: [profile.socials.linkedin, GITHUB_URL],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
