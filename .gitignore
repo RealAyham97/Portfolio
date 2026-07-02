@@ -1,6 +1,8 @@
 node_modules
 .next
 .env*
+!.env.example
+.claude/worktrees/
 .DS_Store
 .vercel
 coverage

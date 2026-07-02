@@ -24,10 +24,17 @@ export async function sendContactEmail(
     return { status: "error", message: "Please enter a valid email address." };
   }
 
+  // Recipient lives in an env var so the address is never committed to source.
+  const to = process.env.CONTACT_EMAIL;
+  if (!to) {
+    console.error("[contact] CONTACT_EMAIL is not set");
+    return { status: "error", message: "Contact is temporarily unavailable. Please try again later." };
+  }
+
   try {
     const { error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
-      to: "rawashdeh199@gmail.com",
+      to,
       replyTo: email,
       subject: `New message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
