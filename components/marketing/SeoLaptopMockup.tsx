@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 // ── Data ─────────────────────────────────────────────────────────────────
 const QUERY = "Aiham Al Rawashdeh";
@@ -23,6 +23,8 @@ const VISITED = "#c58af9";
 const ACCENT_RED = "#ea4335";
 const FOOTER_BG = "#171717";
 const HOVER_BG = "rgba(138,180,248,0.08)";
+const SUGGESTION_HOVER_BG = "#3c4043";
+const SUGGESTION_PRESSED_BG = "#45484d";
 const GOOGLE_FONT = '"Product Sans", "Trebuchet MS", Arial, sans-serif';
 
 // ── Phases ───────────────────────────────────────────────────────────────
@@ -30,13 +32,18 @@ type Phase =
   | "homepage"
   | "typing"
   | "type-done"
-  | "move-to-search"
-  | "clicking-search"
+  | "move-to-suggestion"
+  | "hover-suggestion"
+  | "clicking-suggestion"
   | "serp"
+  | "serp-scroll"
   | "move-to-result"
+  | "hover-result"
   | "clicking-result"
   | "flash-white"
   | "site";
+
+type ElRef = RefObject<HTMLDivElement | null>;
 
 // ── Pointer cursor SVG ───────────────────────────────────────────────────
 function PointerCursor({ pressed }: { pressed: boolean }) {
@@ -92,11 +99,23 @@ type Props = {
 
 export function SeoLaptopMockup({ active }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const firstSuggestionRef = useRef<HTMLDivElement>(null);
+  const serpOuterRef = useRef<HTMLDivElement>(null);
+  const myResultRef = useRef<HTMLDivElement>(null);
+  const resultTitleRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("homepage");
   const [typed, setTyped] = useState("");
+  const [scrollPx, setScrollPx] = useState(0);
   const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null);
   const [reduced, setReduced] = useState(false);
   const [inView, setInView] = useState(false);
+  // Once the animation has run, keep the home-page iframe mounted (hidden
+  // between cycles) so the final frame never shows a loading blank.
+  const [warm, setWarm] = useState(false);
+
+  useEffect(() => {
+    if (active && inView && !reduced) setWarm(true);
+  }, [active, inView, reduced]);
 
   useEffect(() => {
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -118,22 +137,60 @@ export function SeoLaptopMockup({ active }: Props) {
     return () => obs.disconnect();
   }, []);
 
+  // Live scroll value for measurement (state lags inside the async runner).
+  const scrollPxRef = useRef(0);
+  const applyScroll = useCallback((px: number) => {
+    scrollPxRef.current = px;
+    setScrollPx(px);
+  }, []);
+
+  // Cursor targets are measured from the live DOM instead of hardcoded
+  // percentages, so the pointer always lands on what it "clicks".
+  const aimAt = useCallback((el: HTMLElement | null, fx = 0.5, fy = 0.5) => {
+    const root = rootRef.current;
+    if (!el || !root) return null;
+    const r = el.getBoundingClientRect();
+    const rr = root.getBoundingClientRect();
+    if (rr.width === 0 || rr.height === 0) return null;
+    return {
+      x: ((r.left + r.width * fx - rr.left) / rr.width) * 100,
+      y: ((r.top + r.height * fy - rr.top) / rr.height) * 100,
+    };
+  }, []);
+
+  // How far the SERP must scroll so my result sits in the upper third.
+  const measureScrollTarget = useCallback(() => {
+    const outer = serpOuterRef.current;
+    const block = myResultRef.current;
+    if (!outer || !block) return 0;
+    const oR = outer.getBoundingClientRect();
+    const bR = block.getBoundingClientRect();
+    return Math.max(0, bR.top - oR.top + scrollPxRef.current - oR.height * 0.26);
+  }, []);
+
+  // Reduced-motion fallback: skip straight to the payoff frame — the SERP
+  // scrolled to my result, highlighted as the top organic hit.
+  useEffect(() => {
+    if (!reduced) return;
+    setTyped(QUERY);
+    setPhase("serp");
+    setCursor(null);
+    const raf = requestAnimationFrame(() => {
+      applyScroll(measureScrollTarget());
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [reduced, applyScroll, measureScrollTarget]);
+
   // Sequence runner. Plays once the laptop is zoomed in and in view, then loops
   // so the story is always catchable instead of being a one-shot that's usually
   // already over. Resets to the opening frame whenever it's not running.
   useEffect(() => {
-    if (reduced) {
-      // Reduced-motion fallback: skip straight to the payoff frame — the SERP
-      // with my result highlighted as the top organic hit (see render below).
-      setTyped(QUERY);
-      setPhase("serp");
-      setCursor(null);
-      return;
-    }
+    if (reduced) return;
 
     if (!(active && inView)) {
       setPhase("homepage");
       setTyped("");
+      applyScroll(0);
       setCursor(null);
       return;
     }
@@ -150,8 +207,9 @@ export function SeoLaptopMockup({ active }: Props) {
         // Opening frame: empty box, blinking caret, cursor resting below.
         setPhase("homepage");
         setTyped("");
-        setCursor({ x: 50, y: 86 });
-        await wait(1000);
+        applyScroll(0);
+        setCursor({ x: 52, y: 84 });
+        await wait(900);
         if (cancelled) return;
 
         // Type the query one keystroke at a time, with a human-ish rhythm.
@@ -164,39 +222,53 @@ export function SeoLaptopMockup({ active }: Props) {
           await wait(c === " " ? base + 120 : base);
         }
         setPhase("type-done");
-        await wait(550);
+        await wait(500);
         if (cancelled) return;
 
-        // Glide the cursor down to the Search button, then press it.
-        setPhase("move-to-search");
-        setCursor({ x: 41, y: 72 });
-        await wait(850);
-        if (cancelled) return;
-        setPhase("clicking-search");
-        await wait(320);
-        if (cancelled) return;
-
-        // Results load. Keep the cursor visible and walk it to my result
-        // along a continuous path instead of teleporting.
-        setPhase("serp");
-        setCursor({ x: 34, y: 40 });
+        // Glide to the first autocomplete suggestion and click it — the way
+        // people actually search, instead of hunting for the Search button.
+        setPhase("move-to-suggestion");
+        const sAim = aimAt(firstSuggestionRef.current, 0.22, 0.55);
+        if (sAim) setCursor(sAim);
         await wait(750);
         if (cancelled) return;
+        setPhase("hover-suggestion");
+        await wait(280);
+        if (cancelled) return;
+        setPhase("clicking-suggestion");
+        await wait(240);
+        if (cancelled) return;
+
+        // Results load at the top of the page: sponsored ads first, like real
+        // life. Give it a beat, then scroll past them to the organic results.
+        setPhase("serp");
+        await wait(1000);
+        if (cancelled) return;
+        setPhase("serp-scroll");
+        applyScroll(measureScrollTarget());
+        await wait(1050);
+        if (cancelled) return;
+
+        // Walk the cursor onto my result, hover, click.
         setPhase("move-to-result");
-        setCursor({ x: 19, y: 57 });
-        await wait(900);
+        const tAim = aimAt(resultTitleRef.current, 0.32, 0.5);
+        if (tAim) setCursor(tAim);
+        await wait(800);
+        if (cancelled) return;
+        setPhase("hover-result");
+        await wait(300);
         if (cancelled) return;
         setPhase("clicking-result");
-        await wait(520);
+        await wait(420);
         if (cancelled) return;
 
         // Payoff: flash to my site and hold it long enough to register.
         setPhase("flash-white");
-        await wait(220);
+        await wait(200);
         if (cancelled) return;
         setPhase("site");
         setCursor(null);
-        await wait(2400);
+        await wait(3000);
         if (cancelled) return;
       }
     };
@@ -207,15 +279,21 @@ export function SeoLaptopMockup({ active }: Props) {
       cancelled = true;
       for (const t of timers) clearTimeout(t);
     };
-  }, [active, inView, reduced]);
+  }, [active, inView, reduced, aimAt, applyScroll, measureScrollTarget]);
 
   const onHomepage =
     phase === "homepage" ||
     phase === "typing" ||
     phase === "type-done" ||
-    phase === "move-to-search" ||
-    phase === "clicking-search";
-  const onSerp = phase === "serp" || phase === "move-to-result" || phase === "clicking-result";
+    phase === "move-to-suggestion" ||
+    phase === "hover-suggestion" ||
+    phase === "clicking-suggestion";
+  const onSerp =
+    phase === "serp" ||
+    phase === "serp-scroll" ||
+    phase === "move-to-result" ||
+    phase === "hover-result" ||
+    phase === "clicking-result";
   const onSite = phase === "site";
   const onFlash = phase === "flash-white";
 
@@ -236,20 +314,25 @@ export function SeoLaptopMockup({ active }: Props) {
         <HomepageView
           typed={typed}
           caretBlink={phase === "homepage" || phase === "type-done"}
-          showAutocomplete={
-            phase === "typing" || phase === "type-done" || phase === "move-to-search"
-          }
-          searchPressed={phase === "clicking-search"}
+          showAutocomplete={phase !== "homepage"}
+          firstSuggestionRef={firstSuggestionRef}
+          suggestionHover={phase === "hover-suggestion" || phase === "clicking-suggestion"}
+          suggestionPressed={phase === "clicking-suggestion"}
         />
       )}
       {onSerp && (
         <SerpView
-          query={QUERY}
-          resultHover={phase === "move-to-result" || phase === "clicking-result" || reduced}
+          query={SUGGESTIONS[0]}
+          resultHover={phase === "hover-result" || phase === "clicking-result" || reduced}
           resultPressed={phase === "clicking-result"}
+          scrollPx={scrollPx}
+          reduced={reduced}
+          outerRef={serpOuterRef}
+          myResultRef={myResultRef}
+          resultTitleRef={resultTitleRef}
         />
       )}
-      {onSite && <SiteView />}
+      {warm && <SiteFrame visible={onSite} />}
       {onFlash && (
         <div style={{ position: "absolute", inset: 0, background: "#ffffff", zIndex: 50 }} />
       )}
@@ -266,7 +349,7 @@ export function SeoLaptopMockup({ active }: Props) {
             pointerEvents: "none",
           }}
         >
-          <PointerCursor pressed={phase === "clicking-search" || phase === "clicking-result"} />
+          <PointerCursor pressed={phase === "clicking-suggestion" || phase === "clicking-result"} />
         </div>
       )}
     </div>
@@ -280,12 +363,16 @@ function HomepageView({
   typed,
   caretBlink,
   showAutocomplete,
-  searchPressed,
+  firstSuggestionRef,
+  suggestionHover,
+  suggestionPressed,
 }: {
   typed: string;
   caretBlink: boolean;
   showAutocomplete: boolean;
-  searchPressed: boolean;
+  firstSuggestionRef: ElRef;
+  suggestionHover: boolean;
+  suggestionPressed: boolean;
 }) {
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column" }}>
@@ -431,13 +518,20 @@ function HomepageView({
               {SUGGESTIONS.map((s, i) => (
                 <div
                   key={s}
+                  ref={i === 0 ? firstSuggestionRef : undefined}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "0.8em",
                     padding: "0.45em 1em",
                     color: TEXT,
-                    background: i === 0 ? "rgba(255,255,255,0.04)" : "transparent",
+                    background:
+                      i === 0 && suggestionPressed
+                        ? SUGGESTION_PRESSED_BG
+                        : i === 0 && suggestionHover
+                          ? SUGGESTION_HOVER_BG
+                          : "transparent",
+                    transition: "background 0.15s ease-out",
                   }}
                 >
                   <SmallLensIcon />
@@ -460,9 +554,6 @@ function HomepageView({
               border: "1px solid transparent",
               fontSize: "0.78em",
               color: TEXT,
-              transform: searchPressed ? "scale(0.97)" : "scale(1)",
-              boxShadow: searchPressed ? "0 0 0 2px rgba(138,180,248,0.4)" : "0 0 0 0 transparent",
-              transition: "transform 0.12s ease-out, box-shadow 0.12s ease-out",
               fontFamily: "inherit",
               cursor: "default",
             }}
@@ -631,10 +722,20 @@ function SerpView({
   query,
   resultHover,
   resultPressed,
+  scrollPx,
+  reduced,
+  outerRef,
+  myResultRef,
+  resultTitleRef,
 }: {
   query: string;
   resultHover: boolean;
   resultPressed: boolean;
+  scrollPx: number;
+  reduced: boolean;
+  outerRef: ElRef;
+  myResultRef: ElRef;
+  resultTitleRef: ElRef;
 }) {
   return (
     <div
@@ -645,7 +746,7 @@ function SerpView({
         flexDirection: "column",
         background: BG,
         color: TEXT,
-        animation: "seoSerpFadeIn 0.25s ease-out",
+        animation: reduced ? "none" : "seoSerpFadeIn 0.25s ease-out",
       }}
     >
       {/* Top bar */}
@@ -752,83 +853,98 @@ function SerpView({
         <span style={{ marginLeft: "auto", padding: "0.4em 0 0.55em" }}>Tools</span>
       </div>
 
-      {/* Results */}
+      {/* Results viewport — content inside scrolls like a real page */}
       <div
+        ref={outerRef}
         style={{
           flex: 1,
           overflow: "hidden",
-          padding: "0.8em 1.4em 1em 7em",
-          fontSize: "0.85em",
+          position: "relative",
         }}
       >
         <div
           style={{
-            fontSize: "0.72em",
-            color: MUTED,
-            marginBottom: "0.6em",
+            padding: "0.8em 1.4em 1em 7em",
+            fontSize: "0.85em",
+            transform: `translateY(-${scrollPx}px)`,
+            transition: reduced ? "none" : "transform 0.9s cubic-bezier(.25,.6,.2,1)",
+            willChange: "transform",
           }}
         >
-          About 12,400 results (0.42 seconds)
+          <div
+            style={{
+              fontSize: "0.72em",
+              color: MUTED,
+              marginBottom: "0.6em",
+            }}
+          >
+            About 12,400 results (0.42 seconds)
+          </div>
+
+          <SponsoredAd
+            domain="findpros.io"
+            breadcrumb="findpros.io › directory"
+            title="Find Top IT &amp; Marketing Pros — Vetted Talent in Days"
+            desc="Browse vetted professionals across IT, analytics, and growth. Hourly or project."
+            color="#1a73e8"
+          />
+          <SponsoredAd
+            domain="hireanalysts.com"
+            breadcrumb="hireanalysts.com"
+            title="Hire Data Analysts &amp; Growth Marketers"
+            desc="On-demand analysts for SQL, Power BI, and paid acquisition campaigns."
+            color="#0a8a3b"
+          />
+
+          <MyResult
+            hover={resultHover}
+            pressed={resultPressed}
+            blockRef={myResultRef}
+            titleRef={resultTitleRef}
+          />
+
+          <OrganicResult
+            favicon={
+              <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
+                <title>linkedin</title>
+                <rect width="24" height="24" rx="3" fill="#0a66c2" />
+                <text
+                  x="12"
+                  y="17"
+                  textAnchor="middle"
+                  fontSize="14"
+                  fontFamily="Arial"
+                  fontWeight="700"
+                  fill="white"
+                >
+                  in
+                </text>
+              </svg>
+            }
+            site="LinkedIn"
+            breadcrumb="linkedin.com › in › aiham"
+            url="https://www.linkedin.com/in/aihamalrawashdeh"
+            title="Aiham AlRawashdeh - Full-Stack Developer &amp; Digital Marketer"
+            desc="Full-Stack Developer &amp; Digital Marketer based in Amman, Jordan. Builds web apps and runs data-driven campaigns. View profile, posts, and connections on LinkedIn."
+          />
+          <OrganicResult
+            favicon={
+              <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
+                <title>github</title>
+                <rect width="24" height="24" rx="3" fill="#24292f" />
+                <path
+                  d="M12 5.5a6.5 6.5 0 00-2.05 12.67c.32.06.44-.14.44-.31v-1.1c-1.8.4-2.18-.86-2.18-.86-.3-.75-.72-.95-.72-.95-.6-.4.04-.4.04-.4.65.05 1 .67 1 .67.58 1 1.52.71 1.9.54.06-.42.23-.71.42-.87-1.44-.16-2.95-.72-2.95-3.2 0-.7.25-1.28.67-1.73-.07-.16-.29-.83.06-1.73 0 0 .54-.17 1.78.66.52-.14 1.07-.22 1.62-.22.55 0 1.1.08 1.62.22 1.24-.83 1.78-.66 1.78-.66.36.9.14 1.57.07 1.73.42.45.67 1.03.67 1.73 0 2.48-1.51 3.03-2.95 3.2.23.2.44.6.44 1.2v1.78c0 .17.12.38.45.31A6.5 6.5 0 0012 5.5z"
+                  fill="#fff"
+                />
+              </svg>
+            }
+            site="GitHub"
+            breadcrumb="github.com › RealAyham97"
+            url="https://github.com/RealAyham97"
+            title="RealAyham97 (Aiham AlRawashdeh) · GitHub"
+            desc="Public projects, dashboards, and tooling. Pinned: Portfolio (Next.js, Tailwind v4) and a Power BI sample pack."
+          />
         </div>
-
-        <SponsoredAd
-          domain="findpros.io"
-          breadcrumb="findpros.io › directory"
-          title="Find Top IT &amp; Marketing Pros — Vetted Talent in Days"
-          desc="Browse vetted professionals across IT, analytics, and growth. Hourly or project."
-          color="#1a73e8"
-        />
-        <SponsoredAd
-          domain="hireanalysts.com"
-          breadcrumb="hireanalysts.com"
-          title="Hire Data Analysts &amp; Growth Marketers"
-          desc="On-demand analysts for SQL, Power BI, and paid acquisition campaigns."
-          color="#0a8a3b"
-        />
-
-        <MyResult hover={resultHover} pressed={resultPressed} />
-
-        <OrganicResult
-          favicon={
-            <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
-              <title>linkedin</title>
-              <rect width="24" height="24" rx="3" fill="#0a66c2" />
-              <text
-                x="12"
-                y="17"
-                textAnchor="middle"
-                fontSize="14"
-                fontFamily="Arial"
-                fontWeight="700"
-                fill="white"
-              >
-                in
-              </text>
-            </svg>
-          }
-          site="LinkedIn"
-          breadcrumb="linkedin.com › in › aiham"
-          url="https://www.linkedin.com/in/aihamalrawashdeh"
-          title="Aiham AlRawashdeh - Full-Stack Developer &amp; Digital Marketer"
-          desc="Full-Stack Developer &amp; Digital Marketer based in Amman, Jordan. Builds web apps and runs data-driven campaigns. View profile, posts, and connections on LinkedIn."
-        />
-        <OrganicResult
-          favicon={
-            <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
-              <title>github</title>
-              <rect width="24" height="24" rx="3" fill="#24292f" />
-              <path
-                d="M12 5.5a6.5 6.5 0 00-2.05 12.67c.32.06.44-.14.44-.31v-1.1c-1.8.4-2.18-.86-2.18-.86-.3-.75-.72-.95-.72-.95-.6-.4.04-.4.04-.4.65.05 1 .67 1 .67.58 1 1.52.71 1.9.54.06-.42.23-.71.42-.87-1.44-.16-2.95-.72-2.95-3.2 0-.7.25-1.28.67-1.73-.07-.16-.29-.83.06-1.73 0 0 .54-.17 1.78.66.52-.14 1.07-.22 1.62-.22.55 0 1.1.08 1.62.22 1.24-.83 1.78-.66 1.78-.66.36.9.14 1.57.07 1.73.42.45.67 1.03.67 1.73 0 2.48-1.51 3.03-2.95 3.2.23.2.44.6.44 1.2v1.78c0 .17.12.38.45.31A6.5 6.5 0 0012 5.5z"
-                fill="#fff"
-              />
-            </svg>
-          }
-          site="GitHub"
-          breadcrumb="github.com › RealAyham97"
-          url="https://github.com/RealAyham97"
-          title="RealAyham97 (Aiham AlRawashdeh) · GitHub"
-          desc="Public projects, dashboards, and tooling. Pinned: Portfolio (Next.js, Tailwind v4) and a Power BI sample pack."
-        />
       </div>
 
       <style>
@@ -908,9 +1024,20 @@ function SponsoredAd({
   );
 }
 
-function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
+function MyResult({
+  hover,
+  pressed,
+  blockRef,
+  titleRef,
+}: {
+  hover: boolean;
+  pressed: boolean;
+  blockRef: ElRef;
+  titleRef: ElRef;
+}) {
   return (
     <div
+      ref={blockRef}
       style={{
         marginTop: "0.6em",
         marginBottom: "1.4em",
@@ -954,6 +1081,7 @@ function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
         </div>
       </div>
       <div
+        ref={titleRef}
         style={{
           fontSize: "1.1em",
           color: LINK_BLUE,
@@ -971,9 +1099,9 @@ function MyResult({ hover, pressed }: { hover: boolean; pressed: boolean }) {
           marginTop: "0.2em",
         }}
       >
-        Analyst turned entrepreneur — IT services, dashboards, and data-driven marketing. Six years
-        across aviation, consulting, and media. Foundry, Power BI, paid acquisition, and SEO that
-        closes the loop.
+        Full-Stack Developer &amp; Digital Marketer building websites, dashboards, and data-driven
+        marketing. Six years across aviation, consulting, and media. Power BI, paid acquisition,
+        and SEO that closes the loop.
       </div>
     </div>
   );
@@ -1029,84 +1157,60 @@ function OrganicResult({
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Site view — final frame (stylized version of my actual portfolio hero)
+// Site frame — final frame: the real portfolio home page in an iframe,
+// rendered at desktop width and scaled down to fit the laptop screen.
+// Stays mounted (hidden) between loop cycles so it only loads once.
 // ─────────────────────────────────────────────────────────────────────────
-function SiteView() {
+const SITE_FRAME_DESIGN_W = 1280;
+
+function SiteFrame({ visible }: { visible: boolean }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
+
+  // offsetWidth/offsetHeight are layout pixels, unaffected by the parallax
+  // scale() transform — getBoundingClientRect would double-apply the zoom.
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const measure = () => setBox({ w: el.offsetWidth, h: el.offsetHeight });
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const scale = box.w > 0 ? box.w / SITE_FRAME_DESIGN_W : 0;
+
   return (
     <div
+      ref={boxRef}
       style={{
         position: "absolute",
         inset: 0,
         background: "#0a0a0b",
-        color: "#e7e7e7",
-        display: "flex",
-        flexDirection: "column",
-        animation: "seoSiteFadeIn 0.4s ease-out",
+        overflow: "hidden",
+        visibility: visible ? "visible" : "hidden",
+        animation: visible ? "seoSiteFadeIn 0.4s ease-out" : "none",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "1em 1.4em",
-          fontFamily: "monospace",
-          fontSize: "0.75em",
-          color: "#8a8a8a",
-        }}
-      >
-        <span style={{ letterSpacing: "0.1em" }}>AIHAM R.</span>
-        <div style={{ display: "flex", gap: "1.2em" }}>
-          <span>IT</span>
-          <span style={{ color: "#e7e7e7" }}>Marketing</span>
-          <span>Contact</span>
-          <span>Blog</span>
-          <span>FAQ</span>
-        </div>
-      </div>
-
-      <div
-        style={{
-          flex: 1,
-          padding: "2em 2em 0",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1em",
-        }}
-      >
-        <div
+      {scale > 0 && (
+        <iframe
+          src="/"
+          title="Portfolio home page preview"
+          tabIndex={-1}
+          scrolling="no"
           style={{
-            fontFamily: "monospace",
-            fontSize: "0.75em",
-            color: "#8a8a8a",
-            letterSpacing: "0.1em",
+            width: SITE_FRAME_DESIGN_W,
+            height: Math.ceil(box.h / scale),
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            border: 0,
+            display: "block",
+            pointerEvents: "none",
           }}
-        >
-          FULL-STACK DEVELOPER &amp; DIGITAL MARKETER · AMMAN, JORDAN
-        </div>
-        <div style={{ fontFamily: "monospace", fontSize: "0.8em", color: "#8a8a8a" }}>
-          Hi, my name is
-        </div>
-        <div
-          style={{
-            fontFamily: "Georgia, 'Instrument Serif', serif",
-            fontStyle: "italic",
-            fontSize: "3.6em",
-            lineHeight: 1,
-            color: "#fff",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Aiham AlRawashdeh
-        </div>
-        <div style={{ fontSize: "1em", color: "#bcbcbc", maxWidth: "32em" }}>
-          I spot what's broken, then I build what fixes it.
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes seoSiteFadeIn { from { opacity: 0 } to { opacity: 1 } }
-      `}</style>
+        />
+      )}
+      <style>{"@keyframes seoSiteFadeIn { from { opacity: 0 } to { opacity: 1 } }"}</style>
     </div>
   );
 }

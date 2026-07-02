@@ -55,10 +55,13 @@ const CY_MOBILE: Stop[] = [
 ];
 
 // Fixed laptop dimensions at scale=1.
-// Width matches the IT card (420). Height derived from the laptop's
-// natural aspect ratio (330/195 ≈ 1.692) so the bezel reads as a real laptop.
-const LAPTOP_W = 420;
-const LAPTOP_H = Math.round(LAPTOP_W * (195 / 330));
+// Height derived from the laptop's natural aspect ratio (330/195 ≈ 1.692)
+// so the bezel reads as a real laptop.
+const LAPTOP_W = 480;
+// The base bar sticks out 5% on each side of the lid.
+const BASE_OVERHANG = 1.1;
+// Max zoom on mobile — kept small so the laptop never outgrows the viewport.
+const MOBILE_MAX_SCALE = 1.05;
 
 type Props = {
   /** Scroll runway in vh. Longer = slower zoom. @default 250 */
@@ -105,7 +108,10 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
   const cxStops = isMobile ? CX_MOBILE : CX_DESKTOP;
   const cyStops = isMobile ? CY_MOBILE : CY_DESKTOP;
   const scaleStops: Stop[] = isMobile
-    ? [{ at: 0, v: 1.0 }, { at: 1, v: 1.15 }]
+    ? [
+        { at: 0, v: 1.0 },
+        { at: 1, v: MOBILE_MAX_SCALE },
+      ]
     : SCALE_STOPS;
 
   const scale = interp(progress, scaleStops);
@@ -120,7 +126,11 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const w = isMobile ? Math.min(LAPTOP_W, vw - 48) : LAPTOP_W;
+  // On mobile, size the lid so the full laptop — base overhang included —
+  // still fits inside the viewport at maximum zoom.
+  const w = isMobile
+    ? Math.min(LAPTOP_W, Math.floor((vw - 24) / (BASE_OVERHANG * MOBILE_MAX_SCALE)))
+    : LAPTOP_W;
   const h = Math.round(w * (195 / 330));
 
   return (
@@ -138,16 +148,16 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
             className="font-display italic leading-none text-text/80"
             style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
           >
-            Digital{" "}
-            <br />
+            Digital <br />
             Marketing
           </h1>
         </div>
 
         {/* Text alternative for the decorative SERP animation below */}
         <p className="sr-only">
-          Decorative animation: a Google search for the name Aiham AlRawashdeh, with this portfolio
-          ranking first above LinkedIn and GitHub results.
+          Decorative animation: a Google search for the name Aiham AlRawashdeh, scrolling past
+          sponsored ads to this portfolio ranking as the first organic result, above LinkedIn and
+          GitHub.
         </p>
 
         {/* Laptop — absolutely positioned, scales via CSS transform like the IT card */}
@@ -163,8 +173,8 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
             zIndex: 10,
           }}
         >
-          <Laptop width={w} height={h} dark={false} baseVisible={true}>
-            <SeoLaptopMockup active={progress >= 0.85} />
+          <Laptop width={w} height={h} baseVisible={true}>
+            <SeoLaptopMockup active={progress >= 0.6} />
           </Laptop>
         </div>
       </div>

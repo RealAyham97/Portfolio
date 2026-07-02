@@ -3,7 +3,6 @@
 type Props = {
   width: number;
   height: number;
-  dark: boolean;
   baseVisible?: boolean;
   children: React.ReactNode;
 };
@@ -11,15 +10,18 @@ type Props = {
 /**
  * Macbook-style bezel. Children render inside the screen area.
  * Pure styling — no scroll/animation logic here.
+ *
+ * The rim ring uses color-mix with the theme's text color so the outline
+ * stays visible on both light and dark page backgrounds.
  */
-export function Laptop({ width, height, dark, baseVisible = true, children }: Props) {
-  const bezel = dark ? "#0a0a0b" : "#111213";
-  const screenBg = dark ? "#0f1011" : "#ffffff";
+export function Laptop({ width, height, baseVisible = true, children }: Props) {
+  const bezel = "#1a1b1e";
+  const screenBg = "#0f1011";
   const baseH = height * 0.04;
   const screenInset = Math.max(3, width * 0.012);
 
   return (
-    <div style={{ position: "absolute", width, height, willChange: "width,height,transform" }}>
+    <div style={{ position: "absolute", width, height }}>
       {/* Lid */}
       <div
         style={{
@@ -27,9 +29,11 @@ export function Laptop({ width, height, dark, baseVisible = true, children }: Pr
           inset: 0,
           background: bezel,
           borderRadius: Math.max(6, width * 0.018),
-          boxShadow: dark
-            ? "0 30px 60px -30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset"
-            : "0 30px 60px -30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06) inset",
+          boxShadow: [
+            "0 34px 70px -34px rgba(0,0,0,0.55)",
+            "0 0 0 1px color-mix(in oklab, var(--text) 22%, transparent)",
+            "0 0 0 1px rgba(255,255,255,0.05) inset",
+          ].join(", "),
           overflow: "hidden",
         }}
       >
@@ -64,7 +68,7 @@ export function Laptop({ width, height, dark, baseVisible = true, children }: Pr
         </div>
       </div>
 
-      {/* Hinge / base */}
+      {/* Hinge / base — MacBook-silver in both themes */}
       {baseVisible && (
         <>
           <div
@@ -74,11 +78,11 @@ export function Laptop({ width, height, dark, baseVisible = true, children }: Pr
               right: -width * 0.05,
               top: "100%",
               height: baseH,
-              background: `linear-gradient(180deg, ${dark ? "#1a1b1d" : "#cfd1d4"} 0%, ${
-                dark ? "#0a0a0b" : "#9ea1a6"
-              } 100%)`,
+              background: "linear-gradient(180deg, #cfd1d4 0%, #9ea1a6 100%)",
               borderBottomLeftRadius: width * 0.06,
               borderBottomRightRadius: width * 0.06,
+              boxShadow:
+                "0 1px 0 color-mix(in oklab, var(--text) 14%, transparent), 0 14px 24px -12px rgba(0,0,0,0.45)",
             }}
           />
           <div
@@ -89,7 +93,7 @@ export function Laptop({ width, height, dark, baseVisible = true, children }: Pr
               transform: "translateX(-50%)",
               width: width * 0.16,
               height: baseH * 0.55,
-              background: dark ? "#0a0a0b" : "#7d8085",
+              background: "#7d8085",
               borderBottomLeftRadius: 999,
               borderBottomRightRadius: 999,
             }}
