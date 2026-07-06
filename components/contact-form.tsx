@@ -15,13 +15,21 @@ export function ContactForm() {
     setErrorMsg("");
 
     const formData = new FormData(e.currentTarget);
-    const result = await sendContactEmail(formData);
 
-    if (result.status === "success") {
-      setStatus("success");
-      (e.target as HTMLFormElement).reset();
-    } else {
-      setErrorMsg(result.message);
+    // The action can throw (network drop, server crash) — without a catch the
+    // form would stay stuck on "Sending…" forever.
+    try {
+      const result = await sendContactEmail(formData);
+
+      if (result.status === "success") {
+        setStatus("success");
+        (e.target as HTMLFormElement).reset();
+      } else {
+        setErrorMsg(result.message);
+        setStatus("error");
+      }
+    } catch {
+      setErrorMsg("Something went wrong. Please try again later.");
       setStatus("error");
     }
   }
@@ -96,9 +104,7 @@ export function ContactForm() {
             Message received. I'll get back to you soon.
           </p>
         )}
-        {status === "error" && (
-          <p className="font-mono text-xs text-red-500">{errorMsg}</p>
-        )}
+        {status === "error" && <p className="font-mono text-xs text-red-500">{errorMsg}</p>}
       </div>
     </form>
   );
