@@ -155,9 +155,8 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
 
         {/* Text alternative for the decorative SERP animation below */}
         <p className="sr-only">
-          Decorative animation: a Google search for the name Aiham AlRawashdeh, scrolling past
-          sponsored ads to this portfolio ranking as the first organic result, above LinkedIn and
-          GitHub.
+          Decorative animation: a Google search for freelance digital marketer in Jordan, scrolling
+          past sponsored agency ads to this website ranking as the first organic result.
         </p>
 
         {/* Laptop — absolutely positioned, scales via CSS transform like the IT card */}

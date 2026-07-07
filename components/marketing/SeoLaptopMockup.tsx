@@ -3,12 +3,12 @@
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 
 // ── Data ─────────────────────────────────────────────────────────────────
-const QUERY = "Aiham Al Rawashdeh";
+const QUERY = "freelance digital marketer jordan";
 const SUGGESTIONS = [
-  "aiham al rawashdeh",
-  "aiham al rawashdeh portfolio",
-  "aiham al rawashdeh linkedin",
-  "aiham al rawashdeh seo",
+  "freelance digital marketer jordan",
+  "freelance digital marketing jordan",
+  "freelance seo jordan",
+  "freelance digital marketer amman",
 ];
 
 // ── Google dark-mode palette ─────────────────────────────────────────────
@@ -882,17 +882,17 @@ function SerpView({
           </div>
 
           <SponsoredAd
-            domain="findpros.io"
-            breadcrumb="findpros.io › directory"
-            title="Find Top IT &amp; Marketing Pros | Vetted Talent in Days"
-            desc="Browse vetted professionals across IT, analytics, and growth. Hourly or project."
+            domain="growthlab.jo"
+            breadcrumb="growthlab.jo › services"
+            title="Digital Marketing Agency Jordan | Full-Service Campaigns"
+            desc="Paid ads, social media, and SEO for brands in Amman and the GCC. Get a free proposal."
             color="#1a73e8"
           />
           <SponsoredAd
-            domain="hireanalysts.com"
-            breadcrumb="hireanalysts.com"
-            title="Hire Data Analysts &amp; Growth Marketers"
-            desc="On-demand analysts for SQL, Power BI, and paid acquisition campaigns."
+            domain="adnexus.co"
+            breadcrumb="adnexus.co › plans"
+            title="Hire Digital Marketing Experts | Plans From $499/mo"
+            desc="Google and Meta ads managed by certified specialists. Monthly reporting included."
             color="#0a8a3b"
           />
 
@@ -906,43 +906,50 @@ function SerpView({
           <OrganicResult
             favicon={
               <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
-                <title>linkedin</title>
-                <rect width="24" height="24" rx="3" fill="#0a66c2" />
+                <title>jordan business review</title>
+                <rect width="24" height="24" rx="3" fill="#7c3aed" />
                 <text
                   x="12"
                   y="17"
                   textAnchor="middle"
-                  fontSize="14"
+                  fontSize="13"
                   fontFamily="Arial"
                   fontWeight="700"
                   fill="white"
                 >
-                  in
+                  J
                 </text>
               </svg>
             }
-            site="LinkedIn"
-            breadcrumb="linkedin.com › in › aiham"
-            url="https://www.linkedin.com/in/aihamalrawashdeh"
-            title="Aiham AlRawashdeh - Full-Stack Developer &amp; Digital Marketer"
-            desc="Full-Stack Developer &amp; Digital Marketer based in Amman, Jordan. Builds web apps and runs data-driven campaigns. View profile, posts, and connections on LinkedIn."
+            site="Jordan Business Review"
+            breadcrumb="jordanbusinessreview.com › marketing"
+            url="https://jordanbusinessreview.com/marketing"
+            title="Top 10 Digital Marketing Agencies &amp; Freelancers in Jordan (2026)"
+            desc="Our annual roundup of agencies and independent specialists serving Amman and the region, compared by services, pricing, and client reviews."
           />
           <OrganicResult
             favicon={
               <svg viewBox="0 0 24 24" style={{ width: "1.1em", height: "1.1em" }} aria-hidden>
-                <title>github</title>
-                <rect width="24" height="24" rx="3" fill="#24292f" />
-                <path
-                  d="M12 5.5a6.5 6.5 0 00-2.05 12.67c.32.06.44-.14.44-.31v-1.1c-1.8.4-2.18-.86-2.18-.86-.3-.75-.72-.95-.72-.95-.6-.4.04-.4.04-.4.65.05 1 .67 1 .67.58 1 1.52.71 1.9.54.06-.42.23-.71.42-.87-1.44-.16-2.95-.72-2.95-3.2 0-.7.25-1.28.67-1.73-.07-.16-.29-.83.06-1.73 0 0 .54-.17 1.78.66.52-.14 1.07-.22 1.62-.22.55 0 1.1.08 1.62.22 1.24-.83 1.78-.66 1.78-.66.36.9.14 1.57.07 1.73.42.45.67 1.03.67 1.73 0 2.48-1.51 3.03-2.95 3.2.23.2.44.6.44 1.2v1.78c0 .17.12.38.45.31A6.5 6.5 0 0012 5.5z"
-                  fill="#fff"
-                />
+                <title>brightreach</title>
+                <rect width="24" height="24" rx="3" fill="#0e7490" />
+                <text
+                  x="12"
+                  y="17"
+                  textAnchor="middle"
+                  fontSize="13"
+                  fontFamily="Arial"
+                  fontWeight="700"
+                  fill="white"
+                >
+                  B
+                </text>
               </svg>
             }
-            site="GitHub"
-            breadcrumb="github.com › RealAyham97"
-            url="https://github.com/RealAyham97"
-            title="RealAyham97 (Aiham AlRawashdeh) · GitHub"
-            desc="Public projects, dashboards, and tooling. Pinned: Portfolio (Next.js, Tailwind v4) and a Power BI sample pack."
+            site="BrightReach"
+            breadcrumb="brightreach.jo › about"
+            url="https://brightreach.jo/about"
+            title="BrightReach | Digital Marketing Agency in Amman"
+            desc="Full-service agency offering social media management, paid advertising, and branding for businesses across Jordan."
           />
         </div>
       </div>
@@ -1099,9 +1106,9 @@ function MyResult({
           marginTop: "0.2em",
         }}
       >
-        Full-Stack Developer &amp; Digital Marketer building websites, dashboards, and data-driven
-        marketing. Six years across aviation, consulting, and media. Power BI, paid acquisition, and
-        SEO that closes the loop.
+        Freelance digital marketer in Amman, Jordan. SEO, Google and Meta ads, and analytics that
+        close the loop between spend and results. Campaigns in Arabic and English across Jordan and
+        the wider MENA region.
       </div>
     </div>
   );
