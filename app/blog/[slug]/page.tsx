@@ -2,8 +2,8 @@ import { MarkdownBody } from "@/components/markdown-body";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
-import { profile } from "@/content/profile";
 import { posts } from "@/content/posts";
+import { profile } from "@/content/profile";
 import { SITE_URL, pageMeta } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {
+  return new Date(`${iso}T00:00:00`).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -55,12 +55,27 @@ export default async function BlogPost({ params }: Props) {
     keywords: post.tags.join(", "),
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: post.title, item: `${SITE_URL}/blog/${post.slug}` },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: static, not user input
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: static, not user input
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <SiteNav />
       <main>

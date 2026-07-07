@@ -10,7 +10,7 @@ import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 const GITHUB_URL = "https://github.com/RealAyham97";
 // Home-page meta description: keyword-relevant, distinct from the hero tagline.
 const HOME_DESCRIPTION =
-  "Full-stack developer and digital marketer in Amman, Jordan. I build web apps, dashboards, and data-driven marketing that delivers measurable results.";
+  "Freelance full-stack developer and digital marketer in Amman, Jordan. I build websites, Power BI dashboards, and data-driven marketing that delivers measurable results.";
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
@@ -60,9 +60,19 @@ const personJsonLd = {
     "Web development",
     "Digital marketing",
     "SEO",
-    "Data analytics",
+    "Data analysis",
+    "Business analysis",
     "Business intelligence",
+    "Power BI",
   ],
+  knowsLanguage: ["en", "ar"],
+  hasOccupation: {
+    "@type": "Occupation",
+    name: "Freelance Full-Stack Developer & Digital Marketer",
+    occupationLocation: { "@type": "City", name: "Amman" },
+    skills:
+      "Web development, Power BI dashboards, data analysis, business analysis, SEO, paid advertising",
+  },
   sameAs: [profile.socials.linkedin, GITHUB_URL],
 };
 

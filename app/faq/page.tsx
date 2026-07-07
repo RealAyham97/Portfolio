@@ -6,14 +6,27 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   title: "FAQ",
   description:
-    "Answers to common questions about working with Aiham AlRawashdeh on development, data, and digital marketing projects.",
+    "Answers to common questions about working with Aiham AlRawashdeh on freelance web development, Power BI dashboards, data analysis, and digital marketing projects.",
   path: "/faq",
+  languages: { en: "/faq", ar: "/ar/faq", "x-default": "/faq" },
 });
 
 const faqs = [
   {
     q: "What services do you offer?",
     a: "I work across two main areas: IT Services (web development, data analysis, business analysis, and business intelligence) and Digital Marketing (paid acquisition, SEO, and analytics). Both are data-driven and built around measurable outcomes.",
+  },
+  {
+    q: "Do you build Power BI dashboards as a freelancer?",
+    a: "Yes, it's one of my most requested services. I build interactive Power BI dashboards that pull your data from Excel, databases, and Google Analytics into one place, with training for your team and ongoing support if you want it.",
+  },
+  {
+    q: "Can you build my website and also market it?",
+    a: "Yes, and that's the point of hiring one person for both: I build sites SEO-ready from day one, then run the ads, SEO, and analytics after launch, so the build and the marketing work as one connected system instead of two disconnected vendors.",
+  },
+  {
+    q: "Do you work in Arabic as well as English?",
+    a: "Yes, natively in both. That covers Arabic keyword research, ad copy, content, and landing pages, which matters across MENA where most searches happen in Arabic.",
   },
   {
     q: "Who do you typically work with?",
@@ -74,21 +87,22 @@ export default function FAQPage() {
               <Reveal key={i}>
                 <details className="group py-6">
                   <summary className="flex cursor-pointer items-center justify-between gap-4 list-none">
-                    <dt className="text-base font-medium text-text">
-                      {item.q}
-                    </dt>
+                    <dt className="text-base font-medium text-text">{item.q}</dt>
                     <span
                       className="shrink-0 text-text-muted transition-transform group-open:rotate-45"
                       aria-hidden
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                        <path
+                          d="M8 2v12M2 8h12"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
                       </svg>
                     </span>
                   </summary>
-                  <dd className="mt-4 text-sm text-text-muted leading-relaxed">
-                    {item.a}
-                  </dd>
+                  <dd className="mt-4 text-sm text-text-muted leading-relaxed">{item.a}</dd>
                 </details>
               </Reveal>
             ))}

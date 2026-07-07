@@ -69,7 +69,17 @@ export function MarketingContent() {
             </ul>
           </Reveal>
 
-          <Reveal>
+          <Reveal className="space-y-4">
+            <p className="text-lg text-text-muted leading-relaxed">
+              Want the details, deliverables, and pricing approach?{" "}
+              <Link
+                href="/services/digital-marketing"
+                className="text-text underline decoration-border underline-offset-4 transition hover:decoration-accent"
+              >
+                See the full digital marketing service
+              </Link>
+              .
+            </p>
             <Link
               href="/contact"
               className="inline-block rounded-full bg-accent px-8 py-3.5 font-mono text-sm text-accent-fg transition hover:opacity-90"

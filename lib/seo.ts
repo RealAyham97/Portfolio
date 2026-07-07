@@ -12,6 +12,13 @@ type PageMetaArgs = {
   type?: "website" | "article";
   /** ISO date, only used for article pages. */
   publishedTime?: string;
+  /**
+   * hreflang alternates for translated pages, e.g.
+   * { en: "/services/dashboards", ar: "/ar/services/dashboards", "x-default": "/services/dashboards" }.
+   */
+  languages?: Record<string, string>;
+  /** BCP 47 locale for Open Graph. @default "en_US" */
+  locale?: string;
 };
 
 /**
@@ -25,6 +32,8 @@ export function pageMeta({
   path,
   type = "website",
   publishedTime,
+  languages,
+  locale = "en_US",
 }: PageMetaArgs): Metadata {
   const ogTitle = `${title} · ${profile.name}`;
   const openGraph: Metadata["openGraph"] =
@@ -35,7 +44,7 @@ export function pageMeta({
           siteName: profile.name,
           title: ogTitle,
           description,
-          locale: "en_US",
+          locale,
           publishedTime,
           authors: [profile.name],
         }
@@ -45,13 +54,13 @@ export function pageMeta({
           siteName: profile.name,
           title: ogTitle,
           description,
-          locale: "en_US",
+          locale,
         };
 
   return {
     title,
     description,
-    alternates: { canonical: path },
+    alternates: { canonical: path, ...(languages ? { languages } : {}) },
     openGraph,
     twitter: { card: "summary_large_image", title: ogTitle, description },
   };
