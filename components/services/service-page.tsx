@@ -104,66 +104,71 @@ export function ServicePage({ service, locale }: { service: Service; locale: Loc
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 py-12 md:py-16 md:mx-0 md:ml-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] space-y-12">
-        <Reveal className="space-y-5 text-lg text-text-muted leading-relaxed">
-          {content.intro.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-        </Reveal>
-
-        <Reveal className="space-y-4">
-          <h2
-            className="font-display italic text-text"
-            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
-          >
-            {content.offeringsTitle}
-          </h2>
-          <ul className="space-y-3 text-lg text-text-muted leading-relaxed list-disc ps-6">
-            {content.offerings.map((o) => (
-              <li key={o}>{o}</li>
+      {/* A plain nested container (not a margin-left hack) so the column sits
+          at the inline start in both directions: left in English, right in
+          Arabic. Physical margins don't mirror under dir="rtl". */}
+      <section className="mx-auto max-w-6xl px-6 py-12 md:py-16">
+        <div className="max-w-3xl space-y-12">
+          <Reveal className="space-y-5 text-lg text-text-muted leading-relaxed">
+            {content.intro.map((p) => (
+              <p key={p}>{p}</p>
             ))}
-          </ul>
-        </Reveal>
+          </Reveal>
 
-        <Reveal className="space-y-4">
-          <h2
-            className="font-display italic text-text"
-            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
-          >
-            {content.processTitle}
-          </h2>
-          <ol className="space-y-3 text-lg text-text-muted leading-relaxed list-decimal ps-6">
-            {content.process.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
-        </Reveal>
+          <Reveal className="space-y-4">
+            <h2
+              className="font-display italic text-text"
+              style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
+            >
+              {content.offeringsTitle}
+            </h2>
+            <ul className="space-y-3 text-lg text-text-muted leading-relaxed list-disc ps-6">
+              {content.offerings.map((o) => (
+                <li key={o}>{o}</li>
+              ))}
+            </ul>
+          </Reveal>
 
-        <Reveal className="space-y-2">
-          <h2
-            className="font-display italic text-text mb-4"
-            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
-          >
-            {content.faqTitle}
-          </h2>
-          <dl className="divide-y divide-border border-t border-border">
-            {content.faqs.map((item) => (
-              <div key={item.q} className="py-5">
-                <dt className="text-base font-medium text-text">{item.q}</dt>
-                <dd className="mt-2 text-text-muted leading-relaxed">{item.a}</dd>
-              </div>
-            ))}
-          </dl>
-        </Reveal>
+          <Reveal className="space-y-4">
+            <h2
+              className="font-display italic text-text"
+              style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
+            >
+              {content.processTitle}
+            </h2>
+            <ol className="space-y-3 text-lg text-text-muted leading-relaxed list-decimal ps-6">
+              {content.process.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </Reveal>
 
-        <Reveal>
-          <Link
-            href="/contact"
-            className="inline-block rounded-full bg-accent px-8 py-3.5 font-mono text-sm text-accent-fg transition hover:opacity-90"
-          >
-            {content.cta}
-          </Link>
-        </Reveal>
+          <Reveal className="space-y-2">
+            <h2
+              className="font-display italic text-text mb-4"
+              style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)" }}
+            >
+              {content.faqTitle}
+            </h2>
+            <dl className="divide-y divide-border border-t border-border">
+              {content.faqs.map((item) => (
+                <div key={item.q} className="py-5">
+                  <dt className="text-base font-medium text-text">{item.q}</dt>
+                  <dd className="mt-2 text-text-muted leading-relaxed">{item.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+
+          <Reveal>
+            <Link
+              href="/contact"
+              className="inline-block rounded-full bg-accent px-8 py-3.5 font-mono text-sm text-accent-fg transition hover:opacity-90"
+            >
+              {content.cta}
+            </Link>
+          </Reveal>
+        </div>
       </section>
     </main>
   );
