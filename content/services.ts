@@ -211,7 +211,7 @@ export const services: Service[] = [
         "Freelance web development from Amman, Jordan: fast, SEO-ready websites and web apps built with Next.js and React. Fixed-scope builds for startups and small businesses across MENA.",
       h1: "Website & Web App Development",
       intro: [
-        "I'm a freelance web developer building websites and web applications that load fast, rank well, and are easy to maintain. I work with a modern stack — Next.js, React, TypeScript, and Tailwind — and every build ships SEO-ready: clean structure, metadata, sitemaps, and performance budgets from day one.",
+        "I'm a freelance web developer building websites and web applications that load fast, rank well, and are easy to maintain. I work with a modern stack (Next.js, React, TypeScript, and Tailwind), and every build ships SEO-ready: clean structure, metadata, sitemaps, and performance budgets from day one.",
         "The site you're reading is my own work, and my background includes internal web applications for airline crew operations, so I'm comfortable with both marketing sites and tools people rely on daily. Based in Amman, Jordan; working remotely across MENA and worldwide.",
       ],
       offeringsTitle: "What you get",
@@ -253,7 +253,7 @@ export const services: Service[] = [
         "خدمات تصميم وبرمجة مواقع مستقلة من عمّان: مواقع سريعة وجاهزة لمحركات البحث وتطبيقات ويب مبنية بأحدث التقنيات (Next.js و React) وبسعر ثابت متفق عليه. أعمل عن بُعد في كل المنطقة العربية.",
       h1: "تصميم وبرمجة المواقع وتطبيقات الويب",
       intro: [
-        "أعمل كمطور ويب مستقل، أبني مواقع وتطبيقات ويب سريعة التحميل وسهلة الصيانة وجاهزة للظهور في نتائج البحث. أستخدم أحدث التقنيات — Next.js و React و TypeScript — وكل موقع أسلّمه يكون مجهزاً لتحسين محركات البحث (SEO) من اليوم الأول: بنية نظيفة وبيانات وصفية وخرائط موقع وأداء عالٍ.",
+        "أعمل كمطور ويب مستقل، أبني مواقع وتطبيقات ويب سريعة التحميل وسهلة الصيانة وجاهزة للظهور في نتائج البحث. أستخدم أحدث التقنيات مثل Next.js و React و TypeScript، وكل موقع أسلّمه يكون مجهزاً لتحسين محركات البحث (SEO) من اليوم الأول: بنية نظيفة وبيانات وصفية وخرائط موقع وأداء عالٍ.",
         "الموقع الذي تتصفحه الآن من تصميمي وبرمجتي، وتشمل خبرتي بناء تطبيقات داخلية لعمليات طواقم شركات الطيران، لذا أتقن المواقع التسويقية والأدوات التي يعتمد عليها الناس يومياً. أعمل من عمّان، الأردن، وعن بُعد مع عملاء في كل الدول العربية.",
       ],
       offeringsTitle: "ماذا ستحصل عليه",

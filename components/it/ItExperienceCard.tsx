@@ -326,7 +326,7 @@ export function ItExperienceCard() {
                     e.currentTarget.blur();
                   }
                 }}
-                aria-label={`${job.company} — ${job.role}, ${months[idx]} months`}
+                aria-label={`${job.company}: ${job.role}, ${months[idx]} months`}
                 aria-expanded={isActive}
                 className="flex-1 h-full flex items-end p-0 bg-transparent border-0 cursor-pointer outline-none"
               >
@@ -402,7 +402,7 @@ export function ItExperienceCard() {
               className="mt-0.5 uppercase tracking-wider"
               style={{ fontSize: 9, color: "var(--text-muted)" }}
             >
-              {fmtMonth(active.start)} — {fmtMonth(active.end)}
+              {fmtMonth(active.start)} - {fmtMonth(active.end)}
             </div>
 
             <ul

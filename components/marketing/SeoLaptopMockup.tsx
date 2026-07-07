@@ -884,7 +884,7 @@ function SerpView({
           <SponsoredAd
             domain="findpros.io"
             breadcrumb="findpros.io › directory"
-            title="Find Top IT &amp; Marketing Pros — Vetted Talent in Days"
+            title="Find Top IT &amp; Marketing Pros | Vetted Talent in Days"
             desc="Browse vetted professionals across IT, analytics, and growth. Hourly or project."
             color="#1a73e8"
           />
@@ -1089,7 +1089,7 @@ function MyResult({
           textDecoration: hover ? "underline" : "none",
         }}
       >
-        Aiham AlRawashdeh — IT &amp; Digital Marketing
+        Aiham AlRawashdeh | IT &amp; Digital Marketing
       </div>
       <div
         style={{
@@ -1100,8 +1100,8 @@ function MyResult({
         }}
       >
         Full-Stack Developer &amp; Digital Marketer building websites, dashboards, and data-driven
-        marketing. Six years across aviation, consulting, and media. Power BI, paid acquisition,
-        and SEO that closes the loop.
+        marketing. Six years across aviation, consulting, and media. Power BI, paid acquisition, and
+        SEO that closes the loop.
       </div>
     </div>
   );
