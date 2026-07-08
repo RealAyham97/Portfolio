@@ -1,5 +1,6 @@
 "use client";
 
+import { HeroBackdrop } from "@/components/hero-backdrop";
 import { useEffect, useRef, useState } from "react";
 import { SeoLaptopMockup } from "./SeoLaptopMockup";
 import { Laptop } from "./laptop";
@@ -141,8 +142,9 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
       className="bg-background"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <HeroBackdrop />
         {/* Title at top-left — Contact-style heading section */}
-        <div className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+        <div className="relative mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
           <h1
             aria-label="Digital Marketing"
             className="font-display italic leading-none text-text/80"

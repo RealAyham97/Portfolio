@@ -1,11 +1,13 @@
 import { numbers } from "@/content/numbers";
 import { KpiTile } from "./kpi-tile";
 import { Reveal } from "./reveal";
+import { SectionLabel } from "./section-label";
 
 export function Numbers() {
   return (
     <section id="numbers" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
+        <SectionLabel num="04" text="Numbers" />
         <h2
           className="font-display italic text-text"
           style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}

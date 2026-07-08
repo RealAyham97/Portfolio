@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Reveal } from "../reveal";
+import { SectionLabel } from "../section-label";
 
 const SERVICES = [
   {
@@ -25,6 +26,7 @@ export function ItContent() {
     <section className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <div className="max-w-3xl space-y-12">
         <Reveal className="space-y-4">
+          <SectionLabel num="01" text="Services" />
           <h2
             className="font-display italic text-text"
             style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}

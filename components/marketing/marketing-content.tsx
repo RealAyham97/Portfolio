@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Reveal } from "../reveal";
+import { SectionLabel } from "../section-label";
 
 const SERVICES = [
   "Paid ads: campaign strategy, creative, targeting, and optimization on Google Ads, Facebook, Instagram, and Snapchat.",
@@ -40,6 +41,7 @@ export function MarketingContent() {
 
         <div className="space-y-12 md:col-start-1 md:row-start-1">
           <Reveal className="space-y-4">
+            <SectionLabel num="01" text="Services" />
             <h2
               className="font-display italic text-text"
               style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}

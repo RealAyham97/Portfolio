@@ -1,8 +1,9 @@
+import { HeroBackdrop } from "@/components/hero-backdrop";
 import { profile } from "@/content/profile";
 import { formatAmmanTime } from "@/lib/format";
 import { ArrowDownToLine } from "lucide-react";
-import { HeroEmailButton } from "./email-button";
 import { LiveQueryCard } from "./LiveQueryCard";
+import { HeroEmailButton } from "./email-button";
 import { LiveLocalTime } from "./live-local-time";
 
 export function Hero() {
@@ -13,7 +14,8 @@ export function Hero() {
       id="top"
       className="relative mx-auto grid max-w-6xl gap-12 px-6 pt-24 pb-12 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-32 md:pb-16"
     >
-      <div className="flex flex-col justify-center gap-8">
+      <HeroBackdrop />
+      <div className="relative flex flex-col justify-center gap-8">
         <div className="flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-wider text-text-muted">
           <span>{profile.role}</span>
           <span aria-hidden>·</span>
@@ -43,7 +45,7 @@ export function Hero() {
           </a>
         </div>
       </div>
-      <div className="flex items-center">
+      <div className="relative flex items-center">
         <LiveQueryCard />
       </div>
     </section>

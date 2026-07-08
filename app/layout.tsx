@@ -92,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
+        <div className="film-grain" aria-hidden />
         <Analytics />
         <SpeedInsights />
       </body>

@@ -2,6 +2,7 @@
 import { stack } from "@/content/stack";
 import { useState } from "react";
 import { Reveal } from "./reveal";
+import { SectionLabel } from "./section-label";
 
 export function Stack({ categories }: { categories?: string[] }) {
   const filtered = categories ? stack.filter((c) => categories.includes(c.name)) : stack;
@@ -18,6 +19,7 @@ export function Stack({ categories }: { categories?: string[] }) {
   return (
     <section id="stack" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
+        <SectionLabel num="03" text="Stack" />
         <h2
           className="font-display italic text-text"
           style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}

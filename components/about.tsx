@@ -1,6 +1,7 @@
 import { about } from "@/content/about";
 import Link from "next/link";
 import { Reveal } from "./reveal";
+import { SectionLabel } from "./section-label";
 
 const routes = [
   { href: "/it", label: "Websites, Design, & Dashboards" },
@@ -11,6 +12,7 @@ export function About() {
   return (
     <section id="about" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <Reveal>
+        <SectionLabel num="01" text="About" />
         <h2
           className="font-display italic text-text"
           style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}

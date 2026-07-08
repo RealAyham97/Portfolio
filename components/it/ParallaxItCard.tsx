@@ -1,5 +1,6 @@
 "use client";
 
+import { HeroBackdrop } from "@/components/hero-backdrop";
 import { useEffect, useRef, useState } from "react";
 import { ItExperienceCard } from "./ItExperienceCard";
 
@@ -98,7 +99,10 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   const cxStops = isMobile ? CX_MOBILE : CX_DESKTOP;
   const cyStops = isMobile ? CY_MOBILE : CY_DESKTOP;
   const scaleStops: Stop[] = isMobile
-    ? [{ at: 0, v: 1.0 }, { at: 1, v: 1.15 }]
+    ? [
+        { at: 0, v: 1.0 },
+        { at: 1, v: 1.15 },
+      ]
     : SCALE_STOPS;
 
   const scale = interp(progress, scaleStops);
@@ -113,8 +117,9 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
       className="bg-background"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <HeroBackdrop />
         {/* Title at top-left — matches the Contact page heading section */}
-        <div className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+        <div className="relative mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
           <h1
             className="font-display italic leading-none text-text/80"
             style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
