@@ -4,21 +4,33 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto max-w-6xl border-t border-border px-6 py-10 space-y-6">
-      <nav aria-label="Services" className="flex flex-wrap gap-x-6 gap-y-2">
-        {services.map((s) => (
-          <Link
-            key={s.slug}
-            href={`/services/${s.slug}`}
-            className="font-mono text-xs uppercase tracking-wider text-text-muted transition hover:text-text"
-          >
-            {s.label.en}
-          </Link>
-        ))}
-      </nav>
-      <p className="font-mono text-xs uppercase tracking-wider text-text-muted">
+    <footer className="rule-t u-gutter flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
+      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted">
         {profile.name.toUpperCase()} {new Date().getFullYear()}
       </p>
+
+      <nav
+        aria-label="Services"
+        className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted"
+      >
+        {services.map((s, i) => (
+          <span key={s.slug} className="flex items-center gap-2">
+            {i > 0 && <span aria-hidden>·</span>}
+            <Link href={`/services/${s.slug}`} className="transition hover:text-text">
+              {s.label.en}
+            </Link>
+          </span>
+        ))}
+      </nav>
+
+      <a
+        href={profile.socials.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted transition hover:text-text"
+      >
+        LinkedIn
+      </a>
     </footer>
   );
 }

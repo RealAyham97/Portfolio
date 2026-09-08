@@ -1,11 +1,18 @@
 "use client";
 import { useInViewOnce } from "@/hooks/use-in-view-once";
+import { cn } from "@/lib/cn";
 import { animate, useMotionValue } from "motion/react";
 import { useEffect, useState } from "react";
 
-type Props = { value: number; prefix?: string; suffix?: string; label: string };
+type Props = {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  className?: string;
+};
 
-export function KpiTile({ value, prefix = "", suffix = "", label }: Props) {
+export function KpiTile({ value, prefix = "", suffix = "", label, className }: Props) {
   const { ref, inView } = useInViewOnce<HTMLDivElement>();
   const mv = useMotionValue(0);
   const [display, setDisplay] = useState(0);
@@ -21,13 +28,13 @@ export function KpiTile({ value, prefix = "", suffix = "", label }: Props) {
   }, [inView, value, mv]);
 
   return (
-    <div ref={ref} className="border-t border-border pt-4">
-      <div className="font-mono text-2xl text-text sm:text-4xl md:text-5xl tabular-nums">
+    <div ref={ref} className={cn("px-5 py-8 lg:px-10 lg:pt-8 lg:pb-9", className)}>
+      <div className="t-mono-stat text-text">
         {prefix}
         {display}
         {suffix}
       </div>
-      <div className="mt-2 font-mono text-xs uppercase tracking-wider text-text-muted">{label}</div>
+      <div className="t-mono-label mt-[10px] text-text-muted">{label}</div>
     </div>
   );
 }

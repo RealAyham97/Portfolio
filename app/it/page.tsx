@@ -3,8 +3,8 @@ import { ItContent } from "@/components/it/it-content";
 import { Numbers } from "@/components/numbers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
-import { Stack } from "@/components/stack";
 import { SelectedWork } from "@/components/work/selected-work";
+import { formatAmmanTime } from "@/lib/format";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
@@ -14,17 +14,14 @@ export const metadata = pageMeta({
   path: "/it",
 });
 
-const IT_STACK_CATEGORIES = ["Visualization", "Programming", "Automation & Cloud", "Tools"];
-
 export default function ITPage() {
   return (
     <>
-      <SiteNav />
+      <SiteNav initialTime={formatAmmanTime()} />
       <main>
         <ParallaxItCard />
         <ItContent />
         <SelectedWork />
-        <Stack categories={IT_STACK_CATEGORIES} />
         <Numbers />
       </main>
       <SiteFooter />

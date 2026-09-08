@@ -1,25 +1,21 @@
 import { numbers } from "@/content/numbers";
 import { KpiTile } from "./kpi-tile";
-import { Reveal } from "./reveal";
-import { SectionLabel } from "./section-label";
 
+/**
+ * Four-up ruled KPI band. Replaces the old carded grid; cells are separated by
+ * rules rather than gaps, matching the ledger vocabulary. On mobile the band
+ * halves to 2×2, so the right rule follows odd cells instead of every cell.
+ */
 export function Numbers() {
   return (
-    <section id="numbers" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
-      <Reveal>
-        <SectionLabel num="04" text="Numbers" />
-        <h2
-          className="font-display italic text-text"
-          style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-        >
-          Numbers
-        </h2>
-      </Reveal>
-      <Reveal className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
-        {numbers.map((n) => (
-          <KpiTile key={n.label} {...n} />
-        ))}
-      </Reveal>
+    <section id="numbers" className="grid grid-cols-2 lg:grid-cols-4">
+      {numbers.map((n) => (
+        <KpiTile
+          key={n.label}
+          {...n}
+          className="border-b border-border odd:border-r lg:border-b-0 lg:border-r lg:last:border-r-0"
+        />
+      ))}
     </section>
   );
 }

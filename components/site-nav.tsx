@@ -1,9 +1,11 @@
 "use client";
+import { profile } from "@/content/profile";
 import { cn } from "@/lib/cn";
-import { Menu, X } from "lucide-react";
+import { formatAmmanTime } from "@/lib/format";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { LiveLocalTime } from "./hero/live-local-time";
 import { ThemeToggle } from "./theme-toggle";
 
 const LINKS = [
@@ -14,9 +16,20 @@ const LINKS = [
   { href: "/faq", label: "FAQ" },
 ] as const;
 
-export function SiteNav() {
+// "Amman" for the nav clock, derived from the existing location string rather
+// than hardcoded, so the two can never drift apart.
+const CITY = profile.location.split(",")[0].trim();
+
+export function SiteNav({ initialTime }: { initialTime?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [clock, setClock] = useState(initialTime ?? "");
+
+  // The nav is a band in the page flow now, not a fixed overlay, so the clock
+  // has to hydrate itself on routes that don't pass a server-rendered value.
+  useEffect(() => {
+    if (!initialTime) setClock(formatAmmanTime());
+  }, [initialTime]);
 
   useEffect(() => {
     if (!open) return;
@@ -33,99 +46,81 @@ export function SiteNav() {
   }, [open]);
 
   return (
-    <>
-      {open && (
-        <div
-          className="fixed inset-0 z-40 md:hidden"
+    <header className="rule-b relative z-50 bg-background">
+      <nav className="u-gutter flex items-center justify-between py-4 lg:py-5">
+        <Link
+          href="/"
           onClick={() => setOpen(false)}
-          aria-hidden
-        />
-      )}
+          className="font-mono text-[12px] uppercase tracking-[0.18em] text-text transition hover:text-text"
+        >
+          Aiham R.
+        </Link>
 
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-border/50 backdrop-blur-md bg-background/70">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 text-sm">
-          <Link
-            href="/"
-            onClick={() => setOpen(false)}
-            className="font-mono uppercase tracking-wider text-text-muted hover:text-text"
+        {/* Desktop links — no pills, color-only hover */}
+        <ul className="hidden items-center gap-[30px] lg:flex">
+          {LINKS.map((l) => {
+            const isActive = pathname === l.href;
+            return (
+              <li key={l.label}>
+                <Link
+                  href={l.href}
+                  className={cn(
+                    "font-mono text-[12px] uppercase tracking-[0.18em] transition hover:text-text",
+                    isActive ? "text-text" : "text-text-muted",
+                  )}
+                >
+                  {l.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-text-muted">
+            {CITY} {clock ? <LiveLocalTime initial={clock} /> : null}
+          </span>
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((o) => !o)}
+            className="inline-flex min-h-[44px] items-center border border-border px-[10px] font-mono text-[10px] uppercase tracking-[0.14em] text-text-muted transition hover:text-text lg:hidden"
           >
-            Aiham R.
-          </Link>
+            Menu
+          </button>
+        </div>
+      </nav>
 
-          {/* Desktop links */}
-          <ul className="hidden md:flex items-center gap-1">
+      {open && (
+        <nav
+          id="mobile-nav"
+          aria-label="Mobile navigation"
+          className="rule-t bg-background lg:hidden"
+        >
+          <ul className="u-gutter flex flex-col py-2">
             {LINKS.map((l) => {
               const isActive = pathname === l.href;
               return (
                 <li key={l.label}>
                   <Link
                     href={l.href}
+                    onClick={() => setOpen(false)}
                     className={cn(
-                      "relative rounded-full px-3 py-1.5 text-text-muted transition hover:text-text",
-                      isActive && "text-text",
+                      "flex min-h-[44px] items-center font-mono text-[12px] uppercase tracking-[0.18em] transition hover:text-text",
+                      isActive ? "text-text" : "text-text-muted",
                     )}
                   >
                     {l.label}
-                    {isActive && (
-                      <span
-                        className="absolute -right-1 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-accent"
-                        aria-hidden
-                      />
-                    )}
                   </Link>
                 </li>
               );
             })}
           </ul>
-
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <button
-              type="button"
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              aria-controls="mobile-nav"
-              onClick={() => setOpen((o) => !o)}
-              className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-text-muted transition hover:text-text"
-            >
-              {open ? <X size={16} /> : <Menu size={16} />}
-            </button>
-          </div>
         </nav>
-
-        {/* Mobile dropdown */}
-        {open && (
-          <div
-            id="mobile-nav"
-            role="navigation"
-            aria-label="Mobile navigation"
-            className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-md"
-          >
-            <ul className="mx-auto max-w-6xl flex flex-col px-6 py-3 gap-1">
-              {LINKS.map((l) => {
-                const isActive = pathname === l.href;
-                return (
-                  <li key={l.label}>
-                    <Link
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center justify-between rounded-lg px-3 py-3 font-mono text-xs uppercase tracking-wider text-text-muted transition hover:text-text",
-                        isActive && "text-text",
-                      )}
-                    >
-                      {l.label}
-                      {isActive && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-      </header>
-    </>
+      )}
+    </header>
   );
 }

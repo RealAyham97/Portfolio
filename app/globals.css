@@ -101,10 +101,182 @@ body {
   inset: 0;
   z-index: 90;
   pointer-events: none;
-  opacity: 0.045;
+  opacity: 0.036;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
 }
 .dark .film-grain {
-  opacity: 0.06;
+  opacity: 0.055;
+}
+
+/* ---------------------------------------------------------------------------
+   "Ink & Index" layout vocabulary.
+
+   Structure only — every color below resolves to an existing custom property.
+   The type scale is the redesign's core token set: Instrument Serif moves from
+   italic at 44–56px to roman at 30–172px, and mono carries every label.
+   --------------------------------------------------------------------------- */
+
+/* Full-bleed gutter. Replaces the old centred max-w-6xl container. */
+.u-gutter {
+  padding-inline: 20px;
+}
+@media (min-width: 1024px) {
+  .u-gutter {
+    padding-inline: 56px;
+  }
+}
+
+/* Display — Instrument Serif, roman by default. */
+.t-display-xl,
+.t-display-l,
+.t-display-m,
+.t-display-s {
+  font-family: var(--font-display);
+  font-style: normal;
+  letter-spacing: -0.02em;
+}
+.t-display-xl {
+  font-size: 58px;
+  line-height: 0.86;
+}
+.t-display-l {
+  font-size: 52px;
+  line-height: 0.9;
+}
+.t-display-m {
+  font-size: 38px;
+  line-height: 1;
+}
+.t-display-s {
+  font-size: 26px;
+  line-height: 1;
+}
+@media (min-width: 768px) {
+  .t-display-xl {
+    font-size: 172px;
+    line-height: 0.8;
+  }
+}
+@media (min-width: 1024px) {
+  .t-display-l {
+    font-size: 82px;
+    line-height: 0.88;
+  }
+  .t-display-m {
+    font-size: 52px;
+    line-height: 1;
+  }
+  .t-display-s {
+    font-size: 30px;
+    line-height: 1;
+  }
+}
+
+/* Body — Geist Sans. */
+.t-lead {
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 1024px) {
+  .t-lead {
+    font-size: 38px;
+    line-height: 1.15;
+  }
+}
+.t-body-l {
+  font-size: 17px;
+  line-height: 1.7;
+}
+.t-body-m {
+  font-size: 15px;
+  line-height: 1.7;
+}
+.t-body-s {
+  font-size: 13.5px;
+  line-height: 1.58;
+}
+
+/* Mono — every label, eyebrow, stat, and status. */
+.t-mono-eyebrow,
+.t-mono-label,
+.t-mono-data,
+.t-mono-stat {
+  font-family: var(--font-mono);
+}
+.t-mono-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.t-mono-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.t-mono-data {
+  font-size: 11.5px;
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+}
+.t-mono-stat {
+  font-size: 30px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 1024px) {
+  .t-mono-stat {
+    font-size: 44px;
+  }
+}
+
+/* Hairline rules carry the vertical rhythm instead of padding gaps. */
+.rule-t {
+  border-top: 1px solid var(--border);
+}
+.rule-b {
+  border-bottom: 1px solid var(--border);
+}
+
+/* Row hover used by the index, service, and project ledgers. */
+.row-hover {
+  transition: background 250ms ease;
+}
+.row-hover:hover {
+  background: var(--surface-2);
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-rise {
+  animation: riseIn 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.anim-dot-pulse {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-rise,
+  .anim-dot-pulse {
+    animation: none;
+  }
 }

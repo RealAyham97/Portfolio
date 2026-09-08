@@ -4,40 +4,45 @@ import { Reveal } from "../reveal";
 
 export function FeaturedProject({ project }: { project: Project }) {
   return (
-    <Reveal as="article" className="grid gap-8 md:grid-cols-[1.1fr_1fr] md:gap-12 max-w-full overflow-hidden">
-      <div className="space-y-5">
-        <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
+    <Reveal
+      as="article"
+      className="grid max-w-full grid-cols-1 items-start gap-8 px-5 pt-[18px] pb-11 lg:grid-cols-[1fr_1.05fr] lg:gap-12 lg:px-14"
+    >
+      <div>
+        <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
           Featured · {project.client ?? "Personal"}
         </div>
-        <h3
-          className="font-display italic text-text"
-          style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}
-        >
+        <h3 className="mt-4 font-display text-[34px] leading-none tracking-[-0.02em] text-text lg:text-[46px]">
           {project.title}
         </h3>
-        <p className="text-text-muted leading-relaxed">{project.description}</p>
-        <ul className="flex flex-wrap gap-2">
+        <p className="t-body-m mt-4 text-text-muted">{project.description}</p>
+
+        <ul className="mt-5 flex flex-wrap gap-[6px]">
           {project.stack.map((s) => (
             <li
               key={s}
-              className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
+              className="border border-border px-[9px] py-[5px] font-mono text-[10px] uppercase tracking-[0.10em] text-text-muted"
             >
               {s}
             </li>
           ))}
         </ul>
+
         {project.metrics && (
-          <dl className="grid grid-cols-2 gap-4 border-t border-border pt-5 font-mono">
+          <dl className="mt-7 grid grid-cols-2 font-mono">
             {project.metrics.map((m) => (
-              <div key={m.label}>
-                <dt className="text-[11px] uppercase tracking-wider text-text-muted">{m.label}</dt>
-                <dd className="text-xl text-text tabular-nums">{m.value}</dd>
+              <div key={m.label} className="rule-t rule-b py-[14px] pr-4">
+                <dt className="t-mono-label text-text-muted">{m.label}</dt>
+                <dd className="mt-[10px] text-[24px] leading-none tabular-nums text-text">
+                  {m.value}
+                </dd>
               </div>
             ))}
           </dl>
         )}
       </div>
-      <div className="relative aspect-[16/9] overflow-hidden rounded-xl border border-border bg-surface-2">
+
+      <div className="relative aspect-[16/10] w-full border border-border bg-surface-2">
         {project.image ? (
           <Image
             src={project.image}
@@ -45,7 +50,7 @@ export function FeaturedProject({ project }: { project: Project }) {
             fill
             priority
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, 600px"
+            sizes="(max-width: 1024px) 100vw, 640px"
           />
         ) : (
           <div className="flex h-full items-center justify-center font-mono text-xs text-text-muted">

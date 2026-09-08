@@ -255,13 +255,13 @@ export function ItExperienceCard() {
 
   return (
     <div
-      className="w-full rounded-xl border border-border bg-surface-1 p-4 font-mono text-xs sm:text-sm"
+      className="box-border w-full border border-border bg-surface-1 p-4 font-mono text-xs sm:text-sm"
       aria-live="polite"
     >
       {/* Header */}
       <div className="mb-3 flex items-center gap-2" style={{ color: "var(--text-muted)" }}>
         <span
-          className="block h-2 w-2 rounded-full"
+          className="block h-[6px] w-[6px]"
           style={{
             backgroundColor: "var(--accent)",
             animation: "itCardDot 2s ease-in-out infinite",
@@ -296,7 +296,7 @@ export function ItExperienceCard() {
           if (notTouch()) setHover(null);
         }}
       >
-        <div className="flex items-end gap-2" style={{ height: BAR_H_PX }}>
+        <div className="flex items-end gap-px" style={{ height: BAR_H_PX }}>
           {JOBS.map((job, idx) => {
             const h = Math.round((months[idx] / maxMonths) * BAR_H_PX);
             const isActive = idx === hoveredIdx;
@@ -331,7 +331,7 @@ export function ItExperienceCard() {
                 className="flex-1 h-full flex items-end p-0 bg-transparent border-0 cursor-pointer outline-none"
               >
                 <span
-                  className="block w-full rounded-t-sm"
+                  className="block w-full"
                   style={{
                     height: inView ? h : 0,
                     backgroundColor: isActive
@@ -352,7 +352,7 @@ export function ItExperienceCard() {
         </div>
 
         {/* Bar labels */}
-        <div className="mt-1 flex gap-2" aria-hidden>
+        <div className="mt-1 flex gap-px" aria-hidden>
           {JOBS.map((job, idx) => (
             <div
               key={job.id}
@@ -371,7 +371,7 @@ export function ItExperienceCard() {
         {active && (
           <div
             role="tooltip"
-            className="absolute z-20 rounded-lg border border-border bg-surface-1 p-3 pointer-events-none"
+            className="absolute z-20 border border-border bg-surface-1 p-3 pointer-events-none"
             style={{
               width: POPOVER_W_PX,
               bottom: "calc(100% + 10px)",
@@ -424,7 +424,7 @@ export function ItExperienceCard() {
               {active.stack.map((s) => (
                 <span
                   key={s}
-                  className="uppercase tracking-wider rounded border border-border"
+                  className="uppercase tracking-wider border border-border"
                   style={{ fontSize: 8.5, padding: "1px 5px", color: "var(--text-muted)" }}
                 >
                   {s}

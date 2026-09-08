@@ -2,6 +2,7 @@ import { MarketingContent } from "@/components/marketing/marketing-content";
 import { ParallaxZoomHero } from "@/components/marketing/parallax-zoom-hero";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { formatAmmanTime } from "@/lib/format";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
@@ -14,7 +15,7 @@ export const metadata = pageMeta({
 export default function MarketingPage() {
   return (
     <>
-      <SiteNav />
+      <SiteNav initialTime={formatAmmanTime()} />
       <main>
         <ParallaxZoomHero />
         <MarketingContent />

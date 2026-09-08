@@ -67,13 +67,11 @@ const SCENES: Scene[] = [
   },
 ];
 
-const SQL_KW = new Set([
-  "SELECT", "FROM", "WHERE", "GROUP", "BY", "ORDER", "AS", "COUNT", "SUM",
-]);
+const SQL_KW = new Set(["SELECT", "FROM", "WHERE", "GROUP", "BY", "ORDER", "AS", "COUNT", "SUM"]);
 const SQL_SPLIT = /(\s+|[(),;*'])/;
 const MAX_LINES = Math.max(...SCENES.map((s) => s.query.split("\n").length));
-const LINE_H_PX = 24; // matches leading-6
-const BAR_H_PX = 96;  // matches h-24
+const LINE_H_PX = 22; // matches the 22px mono line-height in the ledger
+const BAR_H_PX = 84; // bars read as one continuous data block at 1px gaps
 
 function tokenizeSQL(query: string): ReactNode[] {
   const nodes: ReactNode[] = [];
@@ -115,7 +113,7 @@ export function LiveQueryCard() {
 
   return (
     <div
-      className="rounded-xl border border-border bg-surface-1 p-4 font-mono text-xs sm:text-sm overflow-hidden"
+      className="box-border w-full overflow-hidden font-mono"
       aria-live="polite"
       aria-label={ariaLabel}
       onMouseEnter={() => setPaused(true)}
@@ -124,7 +122,7 @@ export function LiveQueryCard() {
       {/* Header row — stays visible during scene transition */}
       <div className="mb-3 flex items-center gap-2" style={{ color: "var(--text-muted)" }}>
         <motion.span
-          className="block h-2 w-2 rounded-full"
+          className="block h-[6px] w-[6px]"
           style={{ backgroundColor: "var(--accent)" }}
           animate={reducedMotion ? { opacity: 1 } : { opacity: [1, 0.4, 1] }}
           transition={
@@ -134,7 +132,7 @@ export function LiveQueryCard() {
           }
           aria-hidden
         />
-        <span className="uppercase tracking-wider">{scene.header} · LIVE QUERY</span>
+        <span className="text-[11px] uppercase tracking-[0.18em]">{scene.header} · LIVE QUERY</span>
       </div>
 
       {/* Animated scene body */}
@@ -148,25 +146,25 @@ export function LiveQueryCard() {
         >
           {/* SQL block */}
           <pre
-            className="whitespace-pre-wrap leading-6"
-            style={{ minHeight: MAX_LINES * LINE_H_PX }}
+            className="whitespace-pre-wrap text-[12px]"
+            style={{ minHeight: Math.max(MAX_LINES * LINE_H_PX, 110), lineHeight: "22px" }}
           >
             {tokenizeSQL(scene.query)}
           </pre>
 
-          {/* Bar chart */}
+          {/* Bar chart — 1px gaps and a rule under the baseline */}
           <div
-            className="mt-4 flex items-end gap-2"
+            className="mt-4 flex items-end gap-px border-b border-border"
             style={{ height: BAR_H_PX }}
             aria-hidden
           >
             {scene.bars.map((bar) => {
               const h = Math.round((bar.value / maxVal) * BAR_H_PX);
-              const bg = bar.highlight ? "var(--accent)" : "var(--surface-2)";
+              const bg = bar.highlight ? "var(--accent)" : "var(--border)";
               return (
                 <motion.div
                   key={`${scene.id}-${bar.label}`}
-                  className="flex-1 rounded-t-sm"
+                  className="flex-1"
                   style={{ backgroundColor: bg }}
                   animate={{ height: h }}
                   initial={{ height: 0 }}
@@ -181,12 +179,12 @@ export function LiveQueryCard() {
           </div>
 
           {/* Bar labels */}
-          <div className="mt-1 flex gap-2" aria-hidden>
+          <div className="mt-1 flex gap-px" aria-hidden>
             {scene.bars.map((bar) => (
               <div
                 key={bar.label}
-                className="flex-1 text-center uppercase tracking-wider"
-                style={{ fontSize: "9px", color: "var(--text-muted)" }}
+                className="flex-1 text-center uppercase"
+                style={{ fontSize: "8px", letterSpacing: "0.10em", color: "var(--text-muted)" }}
               >
                 {bar.label}
               </div>
@@ -195,8 +193,8 @@ export function LiveQueryCard() {
 
           {/* Footer */}
           <div
-            className="mt-2 uppercase tracking-wider"
-            style={{ fontSize: "10px", color: "var(--text-muted)" }}
+            className="mt-2 uppercase"
+            style={{ fontSize: "9px", letterSpacing: "0.16em", color: "var(--text-muted)" }}
           >
             {scene.footer}
           </div>

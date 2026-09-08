@@ -49,7 +49,8 @@ export const projects: Project[] = [
     slug: "padel-score",
     title: "Padel Score",
     status: "in-progress",
-    summary: "IoT wristband and app system for real-time padel scoring, from PCB design to business development.",
+    summary:
+      "IoT wristband and app system for real-time padel scoring, from PCB design to business development.",
     description:
       "Came up with the idea and strategy, documented the infrastructure on Miro. Designed the wristband, screen, and app demo on Figma and Visual Code. Designed the PCB board for the wristband on Autodesk Fusion and met with vendors in Jordan and China. Defined a business methodology and met with Padel Arenas to build an initial client list.",
     stack: ["Figma", "Autodesk Fusion", "Miro", "Visual Code"],

@@ -1,53 +1,85 @@
-import { HeroBackdrop } from "@/components/hero-backdrop";
+import { about } from "@/content/about";
+import { numbers } from "@/content/numbers";
 import { profile } from "@/content/profile";
-import { formatAmmanTime } from "@/lib/format";
-import { ArrowDownToLine } from "lucide-react";
 import { LiveQueryCard } from "./LiveQueryCard";
 import { HeroEmailButton } from "./email-button";
-import { LiveLocalTime } from "./live-local-time";
+
+// "Aiham" / "AlRawashdeh" — derived from the single name string so the two
+// masthead lines can never drift from content/profile.ts.
+const [FIRST_NAME, ...REST_NAME] = profile.name.split(" ");
+const LAST_NAME = REST_NAME.join(" ");
+
+function formatKpi(n: (typeof numbers)[number]) {
+  return `${n.prefix ?? ""}${n.value}${n.suffix ?? ""} ${n.label}`;
+}
 
 export function Hero() {
-  const initial = formatAmmanTime();
-
   return (
-    <section
-      id="top"
-      className="relative mx-auto grid max-w-6xl gap-12 px-6 pt-24 pb-12 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-32 md:pb-16"
-    >
-      <HeroBackdrop />
-      <div className="relative flex flex-col justify-center gap-8">
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-wider text-text-muted">
+    <>
+      {/* Band 2 — Masthead */}
+      <section id="top" className="u-gutter rule-b pt-[60px] pb-10">
+        <div className="mb-[38px] flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] uppercase tracking-[0.18em] text-text-muted">
+          <span>Hi, my name is</span>
+          <span aria-hidden>·</span>
           <span>{profile.role}</span>
           <span aria-hidden>·</span>
           <span>{profile.location}</span>
-          <span aria-hidden>·</span>
-          <LiveLocalTime initial={initial} />
         </div>
-        <div className="space-y-2">
-          <p className="font-mono text-sm text-text-muted">Hi, my name is</p>
-          <h1
-            className="font-display italic leading-[0.95] text-text"
-            style={{ fontSize: "clamp(2.5rem, 12vw, 9rem)" }}
-          >
-            {profile.name}
-          </h1>
+
+        <h1 className="t-display-xl anim-rise text-text">
+          {FIRST_NAME}
+          <br />
+          <span className="italic text-accent">{LAST_NAME}</span>
+        </h1>
+      </section>
+
+      {/* Band 3 — Ledger. Descenders on the 172px italic need real clearance,
+          so the ledger's own top padding carries the ≥74px gap. */}
+      <section className="rule-b grid grid-cols-1 lg:grid-cols-[1.35fr_1fr_0.8fr]">
+        {/* Column 1 — pitch, about copy, actions */}
+        <div className="border-b border-border px-5 pt-[38px] pb-[46px] lg:border-b-0 lg:border-r lg:pl-14 lg:pr-12">
+          <p className="t-lead text-text">{profile.pitch}</p>
+          <div className="mt-6 max-w-[450px] space-y-4">
+            {about.paragraphs.map((p) => (
+              <p key={p} className="t-body-l text-text-muted">
+                {p}
+              </p>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-col gap-[10px] sm:flex-row sm:gap-3">
+            <HeroEmailButton />
+            <a
+              href={profile.resumeUrl}
+              download
+              className="inline-flex items-center justify-center border border-border px-[22px] py-[14px] font-mono text-[12px] uppercase tracking-[0.14em] text-text transition hover:bg-surface-2"
+            >
+              Resume ↓
+            </a>
+          </div>
         </div>
-        <p className="max-w-xl text-lg text-text-muted md:text-xl">{profile.pitch}</p>
-        <div className="flex flex-wrap items-center gap-3">
-          <HeroEmailButton />
-          <a
-            href={profile.resumeUrl}
-            download
-            className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm text-text transition hover:translate-y-[-1px]"
-          >
-            <ArrowDownToLine size={16} />
-            Resume
-          </a>
+
+        {/* Column 2 — live query, de-carded into the ledger */}
+        <div className="border-b border-border px-5 py-[38px] lg:border-b-0 lg:border-r lg:px-12">
+          <LiveQueryCard />
         </div>
-      </div>
-      <div className="relative flex items-center">
-        <LiveQueryCard />
-      </div>
-    </section>
+
+        {/* Column 3 — meta ledger, folds About + Numbers in */}
+        <div className="flex flex-col gap-[22px] px-5 py-[38px] lg:pl-12 lg:pr-14">
+          <MetaBlock label="Now" body={about.now} />
+          <MetaBlock label="Past" body={about.past.join(" · ")} />
+          <MetaBlock label="Industries" body={about.industries.join(" · ")} />
+          <MetaBlock label="Numbers" body={numbers.map(formatKpi).join(" · ")} />
+        </div>
+      </section>
+    </>
+  );
+}
+
+function MetaBlock({ label, body }: { label: string; body: string }) {
+  return (
+    <div>
+      <div className="t-mono-label mb-2 text-text-muted">{label}</div>
+      <p className="t-mono-data text-text">{body}</p>
+    </div>
   );
 }

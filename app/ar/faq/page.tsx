@@ -70,7 +70,7 @@ export default function ArabicFAQPage() {
       <SiteNav />
       <div lang="ar" dir="rtl">
         <main>
-          <section className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+          <section className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pb-8">
             <Reveal>
               <h1
                 className="font-display italic text-text/80 leading-none"

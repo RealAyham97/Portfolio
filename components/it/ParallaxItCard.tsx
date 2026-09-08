@@ -1,6 +1,5 @@
 "use client";
 
-import { HeroBackdrop } from "@/components/hero-backdrop";
 import { useEffect, useRef, useState } from "react";
 import { ItExperienceCard } from "./ItExperienceCard";
 
@@ -25,34 +24,38 @@ function interp(p: number, stops: Stop[]): number {
 
 const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 
-// Card scales 1.0 → 1.5.
+// Card scales 1.0 → 1.5 along the new ledger path.
 const SCALE_STOPS: Stop[] = [
   { at: 0.0, v: 1.0 },
   { at: 1.0, v: 1.5 },
 ];
-
-// ── Desktop stops ──
-const CX_DESKTOP: Stop[] = [
-  { at: 0.0, v: 0.745 },
+const CX_STOPS: Stop[] = [
+  { at: 0.0, v: 0.73 },
   { at: 0.5, v: 0.5 },
   { at: 1.0, v: 0.5 },
 ];
-const CY_DESKTOP: Stop[] = [
-  { at: 0.0, v: 0.32 },
-  { at: 0.5, v: 0.7 },
-  { at: 1.0, v: 0.7 },
+const CY_STOPS: Stop[] = [
+  { at: 0.0, v: 0.34 },
+  { at: 0.5, v: 0.56 },
+  { at: 1.0, v: 0.56 },
+];
+// Title yields the frame to the card as it zooms in.
+const TITLE_OPACITY: Stop[] = [
+  { at: 0.0, v: 1.0 },
+  { at: 1.0, v: 0.32 },
 ];
 
-// ── Mobile stops: card starts centered below title, stays centered ──
-const CX_MOBILE: Stop[] = [
-  { at: 0.0, v: 0.5 },
-  { at: 1.0, v: 0.5 },
-];
-const CY_MOBILE: Stop[] = [
-  { at: 0.0, v: 0.68 },
-  { at: 0.5, v: 0.68 },
-  { at: 1.0, v: 0.68 },
-];
+const CARD_W = 290;
+
+function Title({ opacity }: { opacity?: number }) {
+  return (
+    <h1 className="t-display-l text-text" style={opacity === undefined ? undefined : { opacity }}>
+      IT
+      <br />
+      <span className="italic text-accent">Services</span>
+    </h1>
+  );
+}
 
 type Props = {
   /** Scroll runway in vh. Longer = slower zoom. @default 250 */
@@ -62,17 +65,27 @@ type Props = {
 export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   const wrapRef = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  // The zoom is a desktop, motion-allowed affordance only. Below 1024px (or
+  // with reduced motion) the card is shown at rest at full column width.
+  // Defaults to on so the desktop majority renders its final structure on the
+  // server; narrow and reduced-motion clients correct on mount.
+  const [zoom, setZoom] = useState(true);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const motionOk = window.matchMedia("(prefers-reduced-motion: no-preference)");
+    const sync = () => setZoom(mq.matches && motionOk.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    motionOk.addEventListener("change", sync);
+    return () => {
+      mq.removeEventListener("change", sync);
+      motionOk.removeEventListener("change", sync);
+    };
   }, []);
 
   useEffect(() => {
+    if (!zoom) return;
     let raf = 0;
     const tick = () => {
       raf = 0;
@@ -94,50 +107,42 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [zoom]);
 
-  const cxStops = isMobile ? CX_MOBILE : CX_DESKTOP;
-  const cyStops = isMobile ? CY_MOBILE : CY_DESKTOP;
-  const scaleStops: Stop[] = isMobile
-    ? [
-        { at: 0, v: 1.0 },
-        { at: 1, v: 1.15 },
-      ]
-    : SCALE_STOPS;
+  if (!zoom) {
+    return (
+      <section aria-label="IT services" className="rule-b u-gutter pt-8 pb-7">
+        <Title />
+        <div className="mt-7">
+          <ItExperienceCard />
+        </div>
+      </section>
+    );
+  }
 
-  const scale = interp(progress, scaleStops);
-  const cxPct = interp(progress, cxStops) * 100;
-  const cyPct = interp(progress, cyStops) * 100;
+  const scale = interp(progress, SCALE_STOPS);
+  const cxPct = interp(progress, CX_STOPS) * 100;
+  const cyPct = interp(progress, CY_STOPS) * 100;
+  const titleOpacity = interp(progress, TITLE_OPACITY);
 
   return (
     <section
       ref={wrapRef}
       aria-label="IT experience scrollytelling"
       style={{ position: "relative", height: `${scrollLengthVh}vh` }}
-      className="bg-background"
+      className="rule-b bg-background"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <HeroBackdrop />
-        {/* Title at top-left — matches the Contact page heading section */}
-        <div className="relative mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
-          <h1
-            className="font-display italic leading-none text-text/80"
-            style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
-          >
-            IT
-            <br />
-            Services
-          </h1>
+        <div className="u-gutter relative pt-11">
+          <Title opacity={titleOpacity} />
         </div>
 
-        {/* Card — absolutely positioned, animates next to title → below title centered */}
         <div
           style={{
             position: "absolute",
             left: `${cxPct}%`,
             top: `${cyPct}%`,
-            width: isMobile ? "calc(100vw - 3rem)" : 420,
-            maxWidth: 420,
+            width: CARD_W,
             transform: `translate(-50%, -50%) scale(${scale})`,
             transformOrigin: "center center",
             zIndex: 10,

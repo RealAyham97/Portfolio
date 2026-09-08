@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import Image from "next/image";
 import { useEffect } from "react";
 
-const STATUS_LABEL: Record<Project["status"], string> = {
+export const STATUS_LABEL: Record<Project["status"], string> = {
   shipped: "Shipped",
   deployed: "Deployed",
   "in-progress": "In progress",
@@ -14,14 +14,18 @@ const STATUS_LABEL: Record<Project["status"], string> = {
 
 export function ProjectOverlay({ project, onClose }: { project: Project; onClose: () => void }) {
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   return (
@@ -59,83 +63,83 @@ export function ProjectOverlay({ project, onClose }: { project: Project; onClose
 
         {/* Scrollable content */}
         <div className="overflow-y-auto flex-1">
-        <article className="mx-auto max-w-4xl space-y-8 p-5 sm:p-8 md:p-12">
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface-2">
-            {project.image && (
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 900px"
-              />
-            )}
-          </div>
-          <header className="space-y-3">
-            <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
-              {STATUS_LABEL[project.status]}
-              {project.client ? ` · ${project.client}` : ""}
+          <article className="mx-auto max-w-4xl space-y-8 p-5 sm:p-8 md:p-12">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface-2">
+              {project.image && (
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 900px"
+                />
+              )}
             </div>
-            <h3
-              className="font-display italic text-text"
-              style={{ fontSize: "clamp(2rem, 5vw, 3rem)" }}
-            >
-              {project.title}
-            </h3>
-            <p className="text-text-muted leading-relaxed">{project.description}</p>
-          </header>
-          <section className="space-y-3">
-            <div className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
-              Stack
-            </div>
-            <ul className="flex flex-wrap gap-2">
-              {project.stack.map((s) => (
-                <li
-                  key={s}
-                  className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
-          </section>
-          {project.metrics && (
-            <section className="grid grid-cols-2 gap-4 border-t border-border pt-6 md:grid-cols-4 font-mono">
-              {project.metrics.map((m) => (
-                <div key={m.label}>
-                  <div className="text-[11px] uppercase tracking-wider text-text-muted">
-                    {m.label}
+            <header className="space-y-3">
+              <div className="font-mono text-xs uppercase tracking-wider text-text-muted">
+                {STATUS_LABEL[project.status]}
+                {project.client ? ` · ${project.client}` : ""}
+              </div>
+              <h3
+                className="font-display italic text-text"
+                style={{ fontSize: "clamp(2rem, 5vw, 3rem)" }}
+              >
+                {project.title}
+              </h3>
+              <p className="text-text-muted leading-relaxed">{project.description}</p>
+            </header>
+            <section className="space-y-3">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-text-muted">
+                Stack
+              </div>
+              <ul className="flex flex-wrap gap-2">
+                {project.stack.map((s) => (
+                  <li
+                    key={s}
+                    className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </section>
+            {project.metrics && (
+              <section className="grid grid-cols-2 gap-4 border-t border-border pt-6 md:grid-cols-4 font-mono">
+                {project.metrics.map((m) => (
+                  <div key={m.label}>
+                    <div className="text-[11px] uppercase tracking-wider text-text-muted">
+                      {m.label}
+                    </div>
+                    <div className="text-xl text-text tabular-nums">{m.value}</div>
                   </div>
-                  <div className="text-xl text-text tabular-nums">{m.value}</div>
-                </div>
-              ))}
-            </section>
-          )}
-          {(project.links?.live || project.links?.github) && (
-            <section className="flex gap-3">
-              {project.links?.live && (
-                <a
-                  href={project.links.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-accent px-4 py-2 text-sm text-accent-fg"
-                >
-                  Visit live
-                </a>
-              )}
-              {project.links?.github && (
-                <a
-                  href={project.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-border px-4 py-2 text-sm"
-                >
-                  GitHub
-                </a>
-              )}
-            </section>
-          )}
-        </article>
+                ))}
+              </section>
+            )}
+            {(project.links?.live || project.links?.github) && (
+              <section className="flex gap-3">
+                {project.links?.live && (
+                  <a
+                    href={project.links.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full bg-accent px-4 py-2 text-sm text-accent-fg"
+                  >
+                    Visit live
+                  </a>
+                )}
+                {project.links?.github && (
+                  <a
+                    href={project.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full border border-border px-4 py-2 text-sm"
+                  >
+                    GitHub
+                  </a>
+                )}
+              </section>
+            )}
+          </article>
         </div>
       </motion.div>
     </>

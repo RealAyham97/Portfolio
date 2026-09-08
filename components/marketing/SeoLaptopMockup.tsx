@@ -448,7 +448,7 @@ function HomepageView({
         <GoogleWordmark size="5.5em" />
 
         {/* Search box */}
-        <div style={{ position: "relative", width: "62%", maxWidth: "640px" }}>
+        <div style={{ position: "relative", width: "74%", maxWidth: "640px" }}>
           <div
             style={{
               display: "flex",
@@ -773,7 +773,9 @@ function SerpView({
             background: SEARCH_BG,
           }}
         >
-          <span style={{ fontSize: "0.88em", color: TEXT, flex: 1 }}>{query}</span>
+          {/* flex: 1 gives the query only leftover space next to the fixed-width
+              icon siblings, which clips it mid-string; 1 0 auto sizes to content. */}
+          <span style={{ fontSize: "0.88em", color: TEXT, flex: "1 0 auto" }}>{query}</span>
           <MicIcon />
           <LensIcon />
           <AiModePill />

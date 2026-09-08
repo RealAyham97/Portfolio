@@ -79,7 +79,7 @@ export default async function BlogPost({ params }: Props) {
       />
       <SiteNav />
       <main>
-        <article className="mx-auto max-w-6xl px-6 pt-32 pb-12 md:pt-40 md:pb-16">
+        <article className="mx-auto max-w-6xl px-6 pt-10 pb-12 md:pb-16">
           <Reveal>
             <Link
               href="/blog"
@@ -99,7 +99,7 @@ export default async function BlogPost({ params }: Props) {
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
+                      className=" border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
                     >
                       {tag}
                     </span>

@@ -27,7 +27,7 @@ export default function BlogPage() {
     <>
       <SiteNav />
       <main>
-        <section className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+        <section className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pb-8">
           <Reveal>
             <h1
               className="font-display italic text-text/80 leading-none"
@@ -54,7 +54,7 @@ export default function BlogPage() {
                       {post.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
+                          className=" border border-border px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wider text-text-muted"
                         >
                           {tag}
                         </span>
@@ -64,9 +64,7 @@ export default function BlogPage() {
                   <h2 className="font-display italic text-text text-xl md:text-2xl leading-snug">
                     {post.title}
                   </h2>
-                  <p className="text-text-muted leading-relaxed line-clamp-2">
-                    {post.description}
-                  </p>
+                  <p className="text-text-muted leading-relaxed line-clamp-2">{post.description}</p>
                 </Link>
               </Reveal>
             ))}

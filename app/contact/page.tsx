@@ -18,7 +18,7 @@ export default function ContactPage() {
     <>
       <SiteNav />
       <main>
-        <section className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+        <section className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pb-8">
           <Reveal>
             <h1
               className="font-display italic text-text/80 leading-none"
@@ -38,8 +38,8 @@ export default function ContactPage() {
                   Let's talk
                 </p>
                 <p className="text-text-muted leading-relaxed">
-                  Whether it's a project, a question, or just a hello, send a note with the form
-                  and I'll get back to you.
+                  Whether it's a project, a question, or just a hello, send a note with the form and
+                  I'll get back to you.
                 </p>
               </div>
 
@@ -51,7 +51,7 @@ export default function ContactPage() {
                     rel="noreferrer noopener"
                     className="group flex items-center gap-3 text-sm text-text-muted transition hover:text-text"
                   >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border transition group-hover:border-accent">
+                    <span className="flex h-9 w-9 items-center justify-center border border-border transition group-hover:border-accent">
                       <Linkedin size={14} />
                     </span>
                     LinkedIn

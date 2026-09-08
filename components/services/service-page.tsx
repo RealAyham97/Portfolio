@@ -85,7 +85,7 @@ export function ServicePage({ service, locale }: { service: Service; locale: Loc
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <section className="mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+      <section className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pb-8">
         <Reveal>
           <h1
             className="font-display italic text-text/80 leading-tight"
@@ -163,7 +163,7 @@ export function ServicePage({ service, locale }: { service: Service; locale: Loc
           <Reveal>
             <Link
               href="/contact"
-              className="inline-block rounded-full bg-accent px-8 py-3.5 font-mono text-sm text-accent-fg transition hover:opacity-90"
+              className="inline-block bg-accent px-8 py-3.5 font-mono text-sm text-accent-fg transition hover:opacity-90"
             >
               {content.cta}
             </Link>

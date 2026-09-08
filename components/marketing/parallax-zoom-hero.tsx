@@ -1,6 +1,5 @@
 "use client";
 
-import { HeroBackdrop } from "@/components/hero-backdrop";
 import { useEffect, useRef, useState } from "react";
 import { SeoLaptopMockup } from "./SeoLaptopMockup";
 import { Laptop } from "./laptop";
@@ -29,19 +28,24 @@ const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 // Same zoom curve as the IT card.
 const SCALE_STOPS: Stop[] = [
   { at: 0.0, v: 1.0 },
-  { at: 1.0, v: 1.5 },
+  { at: 1.0, v: 1.45 },
+];
+// Title yields the frame to the laptop as it zooms in.
+const TITLE_OPACITY: Stop[] = [
+  { at: 0.0, v: 1.0 },
+  { at: 1.0, v: 0.32 },
 ];
 
 // ── Desktop stops ──
 const CX_DESKTOP: Stop[] = [
-  { at: 0.0, v: 0.745 },
+  { at: 0.0, v: 0.72 },
   { at: 0.5, v: 0.5 },
   { at: 1.0, v: 0.5 },
 ];
 const CY_DESKTOP: Stop[] = [
-  { at: 0.0, v: 0.32 },
-  { at: 0.5, v: 0.7 },
-  { at: 1.0, v: 0.7 },
+  { at: 0.0, v: 0.36 },
+  { at: 0.5, v: 0.56 },
+  { at: 1.0, v: 0.56 },
 ];
 
 // ── Mobile stops: laptop starts centered below title ──
@@ -139,19 +143,18 @@ export function ParallaxZoomHero({ scrollLengthVh = 250 }: Props) {
       ref={wrapRef}
       aria-label="Digital marketing scrollytelling intro"
       style={{ position: "relative", height: `${scrollLengthVh}vh` }}
-      className="bg-background"
+      className="rule-b bg-background"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <HeroBackdrop />
         {/* Title at top-left — Contact-style heading section */}
-        <div className="relative mx-auto max-w-6xl px-6 pt-32 pb-4 md:pt-40 md:pb-8">
+        <div className="u-gutter relative pt-11">
           <h1
             aria-label="Digital Marketing"
-            className="font-display italic leading-none text-text/80"
-            style={{ fontSize: "clamp(3rem, 10vw, 5rem)" }}
+            className="t-display-l text-text"
+            style={{ opacity: interp(progress, TITLE_OPACITY) }}
           >
             Digital <br />
-            Marketing
+            <span className="italic text-accent">Marketing</span>
           </h1>
         </div>
 

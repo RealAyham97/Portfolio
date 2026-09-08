@@ -1,4 +1,3 @@
-import { Mail } from "lucide-react";
 import Link from "next/link";
 
 // Routes to the contact form rather than exposing a mailto: address, so no
@@ -7,10 +6,9 @@ export function HeroEmailButton() {
   return (
     <Link
       href="/contact"
-      className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-fg transition hover:translate-y-[-1px]"
+      className="inline-flex items-center justify-center bg-accent px-[22px] py-[14px] font-mono text-[12px] uppercase tracking-[0.14em] text-accent-fg transition hover:opacity-90"
     >
-      <Mail size={16} />
-      Email me
+      Email me →
     </Link>
   );
 }
