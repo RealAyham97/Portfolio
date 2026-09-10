@@ -29,23 +29,21 @@ const ROWS = [
 export function IndexBand() {
   return (
     <section id="index" aria-label="What are you looking for?">
-      <p className="t-mono-eyebrow u-gutter pt-[30px] pb-[6px] text-text-muted">
-        What are you looking for?
-      </p>
+      <p className="t-mono-eyebrow u-gutter pt-6 pb-3 text-text-muted">What are you looking for?</p>
 
       {ROWS.map((row) => (
         <Link
           key={row.href}
           href={row.href}
-          className="row-hover rule-t u-gutter flex flex-col gap-3 py-[26px] lg:flex-row lg:items-center lg:justify-between lg:gap-6"
+          className="row-hover row-zebra rule-t u-gutter flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6"
         >
-          <span className="flex flex-col gap-2 lg:flex-row lg:items-baseline lg:gap-[26px]">
-            <span className="font-mono text-[12px] tracking-[0.10em] text-accent">{row.num}</span>
-            <span className="font-display text-[34px] leading-none tracking-[-0.02em] text-text lg:text-[58px]">
-              {row.label}
+          <span className="flex items-center gap-3.5">
+            <span className="block-accent font-display grid h-[34px] w-[34px] flex-none place-items-center text-[15px]">
+              {row.num}
             </span>
+            <span className="t-display-s text-text">{row.label}</span>
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-muted lg:whitespace-nowrap lg:text-[11px] lg:tracking-[0.16em]">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.1em] text-text-muted lg:whitespace-nowrap">
             {row.tools.join(" · ")} →
           </span>
         </Link>

@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: var(--font-instrument-serif);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-archivo-black);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-jetbrains-mono);
   --color-background: var(--background);
   --color-surface-1: var(--surface-1);
   --color-surface-2: var(--surface-2);
@@ -12,6 +12,8 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
+  --color-second: var(--second);
+  --color-second-fg: var(--second-fg);
 }
 
 :root {
@@ -20,9 +22,11 @@
   --surface-2: oklch(0.93 0.003 80);
   --text: oklch(0.18 0 0);
   --text-muted: oklch(0.45 0 0);
-  --border: oklch(0.85 0.003 80);
+  --border: oklch(0.18 0 0);
   --accent: oklch(0.49 0.17 27);
   --accent-fg: oklch(0.985 0 0);
+  --second: #0f8a7e;
+  --second-fg: #14110f;
 }
 
 .dark {
@@ -31,9 +35,11 @@
   --surface-2: oklch(0.22 0 0);
   --text: oklch(0.95 0 0);
   --text-muted: oklch(0.65 0 0);
-  --border: oklch(0.28 0 0);
+  --border: oklch(0.95 0 0);
   --accent: oklch(0.62 0.19 27);
   --accent-fg: oklch(0.985 0 0);
+  --second: #35b3a4;
+  --second-fg: #14110f;
 }
 
 * {
@@ -93,190 +99,204 @@ body {
   transform: translateY(0);
 }
 
-/* Sitewide film grain: kills the flat "empty void" feel of the plain
-   light/dark backgrounds without touching the palette. SVG fractal noise,
-   fixed over everything, faint enough to read as paper/film texture. */
-.film-grain {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-  opacity: 0.036;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
-.dark .film-grain {
-  opacity: 0.055;
-}
-
 /* ---------------------------------------------------------------------------
-   "Ink & Index" layout vocabulary.
+   "Hard Edge" neo-brutalist vocabulary.
 
-   Structure only — every color below resolves to an existing custom property.
-   The type scale is the redesign's core token set: Instrument Serif moves from
-   italic at 44–56px to roman at 30–172px, and mono carries every label.
+   Structure carried by 3px ink rules and hard offset shadows instead of
+   hairlines. --border now resolves to the ink color, so every existing
+   border-border usage converts with it. Red keeps the identity; --second
+   (Signal Teal) carries structure: active states, meta labels, chart bars.
    --------------------------------------------------------------------------- */
 
-/* Full-bleed gutter. Replaces the old centred max-w-6xl container. */
 .u-gutter {
   padding-inline: 20px;
 }
 @media (min-width: 1024px) {
   .u-gutter {
-    padding-inline: 56px;
+    padding-inline: 40px;
   }
 }
 
-/* Display — Instrument Serif, roman by default. */
+/* Display — Archivo Black, uppercase, tight. */
 .t-display-xl,
 .t-display-l,
 .t-display-m,
 .t-display-s {
   font-family: var(--font-display);
-  font-style: normal;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  text-transform: uppercase;
 }
 .t-display-xl {
-  font-size: 58px;
-  line-height: 0.86;
+  font-size: 52px;
+  line-height: 0.84;
+  letter-spacing: -0.045em;
 }
 .t-display-l {
-  font-size: 52px;
-  line-height: 0.9;
+  font-size: 44px;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
 }
 .t-display-m {
-  font-size: 38px;
+  font-size: 32px;
   line-height: 1;
+  letter-spacing: -0.03em;
 }
 .t-display-s {
-  font-size: 26px;
+  font-size: 22px;
   line-height: 1;
+  letter-spacing: -0.03em;
 }
 @media (min-width: 768px) {
   .t-display-xl {
-    font-size: 172px;
-    line-height: 0.8;
+    font-size: 132px;
   }
 }
 @media (min-width: 1024px) {
   .t-display-l {
-    font-size: 82px;
-    line-height: 0.88;
+    font-size: 76px;
   }
   .t-display-m {
-    font-size: 52px;
-    line-height: 1;
+    font-size: 46px;
   }
   .t-display-s {
-    font-size: 30px;
-    line-height: 1;
+    font-size: 28px;
   }
 }
 
-/* Body — Geist Sans. */
+/* Body — Archivo. */
 .t-lead {
+  font-family: var(--font-display);
   font-size: 22px;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
 }
 @media (min-width: 1024px) {
   .t-lead {
-    font-size: 38px;
-    line-height: 1.15;
+    font-size: 32px;
   }
 }
 .t-body-l {
-  font-size: 17px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.62;
 }
 .t-body-m {
-  font-size: 15px;
-  line-height: 1.7;
+  font-size: 14.5px;
+  line-height: 1.62;
 }
 .t-body-s {
   font-size: 13.5px;
-  line-height: 1.58;
+  line-height: 1.55;
 }
 
-/* Mono — every label, eyebrow, stat, and status. */
+/* Mono — every label, stat, and status. */
 .t-mono-eyebrow,
 .t-mono-label,
 .t-mono-data,
 .t-mono-stat {
   font-family: var(--font-mono);
+  font-weight: 700;
 }
 .t-mono-eyebrow {
   font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-.t-mono-label {
-  font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
+.t-mono-label {
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
 .t-mono-data {
-  font-size: 11.5px;
-  line-height: 1.9;
-  letter-spacing: 0.06em;
+  font-size: 10.5px;
+  line-height: 1.75;
+  letter-spacing: 0.04em;
+  font-weight: 400;
 }
 .t-mono-stat {
+  font-family: var(--font-display);
   font-size: 30px;
   line-height: 1;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }
 @media (min-width: 1024px) {
   .t-mono-stat {
-    font-size: 44px;
+    font-size: 40px;
   }
 }
 
-/* Hairline rules carry the vertical rhythm instead of padding gaps. */
+/* Slab rules — 3px, ink. */
 .rule-t {
-  border-top: 1px solid var(--border);
+  border-top: 3px solid var(--border);
 }
 .rule-b {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 3px solid var(--border);
 }
 
-/* Row hover used by the index, service, and project ledgers. */
-.row-hover {
-  transition: background 250ms ease;
+/* Hard offset shadow. The one elevation the system has. */
+.shadow-hard {
+  box-shadow: 5px 5px 0 var(--border);
 }
+.shadow-hard-sm {
+  box-shadow: 3px 3px 0 var(--border);
+}
+
+/* Rows: filled at rest on alternate lines, inverted on hover. No easing —
+   the state change is a cut, not a transition. */
 .row-hover:hover {
   background: var(--surface-2);
 }
-
-@keyframes riseIn {
-  from {
-    opacity: 0;
-    transform: translateY(0.45em);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.anim-rise {
-  animation: riseIn 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+.row-zebra:nth-child(odd) {
+  background: var(--surface-1);
 }
 
-@keyframes dotPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
+/* Blocks: teal for structure, accent for identity. */
+.block-second {
+  background: var(--second);
+  color: var(--second-fg);
+  border: 2px solid var(--border);
 }
-.anim-dot-pulse {
-  animation: dotPulse 2s ease-in-out infinite;
+.block-accent {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: 2px solid var(--border);
+}
+
+/* Buttons */
+.btn-hard {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--border);
+  box-shadow: 5px 5px 0 var(--border);
+  padding: 12px 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--background);
+  color: var(--text);
+}
+.btn-hard:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--border);
+}
+.btn-hard.is-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* Outlined masthead line — accent fill, ink stroke. */
+.text-outline {
+  color: var(--accent);
+  -webkit-text-stroke: 2px var(--border);
+  paint-order: stroke fill;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-rise,
-  .anim-dot-pulse {
-    animation: none;
+  .btn-hard:hover {
+    transform: none;
+    box-shadow: 5px 5px 0 var(--border);
   }
 }

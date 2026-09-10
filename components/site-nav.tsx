@@ -25,8 +25,6 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
   const [open, setOpen] = useState(false);
   const [clock, setClock] = useState(initialTime ?? "");
 
-  // The nav is a band in the page flow now, not a fixed overlay, so the clock
-  // has to hydrate itself on routes that don't pass a server-rendered value.
   useEffect(() => {
     if (!initialTime) setClock(formatAmmanTime());
   }, [initialTime]);
@@ -47,17 +45,17 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
 
   return (
     <header className="rule-b relative z-50 bg-background">
-      <nav className="u-gutter flex items-center justify-between py-4 lg:py-5">
+      <nav className="u-gutter flex items-center justify-between gap-4 py-3.5">
         <Link
           href="/"
           onClick={() => setOpen(false)}
-          className="font-mono text-[12px] uppercase tracking-[0.18em] text-text transition hover:text-text"
+          className="block-accent font-display text-[15px] tracking-[-0.02em] px-2.5 py-1"
         >
-          Aiham R.
+          AIHAM R.
         </Link>
 
-        {/* Desktop links — no pills, color-only hover */}
-        <ul className="hidden items-center gap-[30px] lg:flex">
+        {/* Desktop links — filled teal pill marks the active route */}
+        <ul className="hidden items-center gap-1.5 lg:flex">
           {LINKS.map((l) => {
             const isActive = pathname === l.href;
             return (
@@ -65,8 +63,10 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
                 <Link
                   href={l.href}
                   className={cn(
-                    "font-mono text-[12px] uppercase tracking-[0.18em] transition hover:text-text",
-                    isActive ? "text-text" : "text-text-muted",
+                    "block border-2 px-2.5 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.12em]",
+                    isActive
+                      ? "block-second"
+                      : "border-transparent text-text-muted hover:border-border hover:text-text",
                   )}
                 >
                   {l.label}
@@ -76,8 +76,8 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
           })}
         </ul>
 
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-text-muted">
+        <div className="flex items-center gap-2.5">
+          <span className="hidden font-mono text-[11px] font-bold uppercase tracking-[0.1em] text-text-muted sm:inline">
             {CITY} {clock ? <LiveLocalTime initial={clock} /> : null}
           </span>
           <ThemeToggle />
@@ -87,7 +87,7 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((o) => !o)}
-            className="inline-flex min-h-[44px] items-center border border-border px-[10px] font-mono text-[10px] uppercase tracking-[0.14em] text-text-muted transition hover:text-text lg:hidden"
+            className="shadow-hard-sm inline-flex min-h-[44px] items-center border-[3px] border-border px-3 font-mono text-[10px] font-bold uppercase tracking-[0.14em] lg:hidden"
           >
             Menu
           </button>
@@ -109,8 +109,8 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
                     href={l.href}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "flex min-h-[44px] items-center font-mono text-[12px] uppercase tracking-[0.18em] transition hover:text-text",
-                      isActive ? "text-text" : "text-text-muted",
+                      "flex min-h-[44px] items-center font-mono text-[12px] font-bold uppercase tracking-[0.16em]",
+                      isActive ? "text-second" : "text-text-muted hover:text-text",
                     )}
                   >
                     {l.label}

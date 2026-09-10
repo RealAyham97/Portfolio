@@ -5,20 +5,23 @@ import { SITE_URL } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Archivo, Archivo_Black, JetBrains_Mono } from "next/font/google";
 
 const GITHUB_URL = "https://github.com/RealAyham97";
 // Home-page meta description: keyword-relevant, distinct from the hero tagline.
 const HOME_DESCRIPTION =
   "Freelance full-stack developer and digital marketer in Amman, Jordan. I build websites, Power BI dashboards, and data-driven marketing that delivers measurable results.";
 
-const sans = Geist({ subsets: ["latin"], variable: "--font-geist-sans", display: "swap" });
-const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
-const display = Instrument_Serif({
+const sans = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+const display = Archivo_Black({
   subsets: ["latin"],
   weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
+  variable: "--font-archivo-black",
   display: "swap",
 });
 
@@ -92,7 +95,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
-        <div className="film-grain" aria-hidden />
         <Analytics />
         <SpeedInsights />
       </body>

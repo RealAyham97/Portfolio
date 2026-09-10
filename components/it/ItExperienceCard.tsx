@@ -87,17 +87,17 @@ const JOBS: Job[] = [
   {
     id: 5,
     company: "Freelancing",
-    role: "Full-Stack Developer & Digital Marketer",
+    role: "Full-Stack Developer & Analyst",
     location: "Remote",
     start: "2025-04",
     end: "Present",
     label: "FREELANCE",
-    stack: ["Power BI", "Python", "SEO", "Strategy"],
+    stack: ["Power BI", "Web Development", "Data & Business", "Strategy"],
     bullets: [
       "Built Power BI dashboards & reports for Ecompanio.",
       "Supported a cloud kitchen / bakery launch end-to-end.",
       "Analyzed engagement & KPIs for Padel Score.",
-      "Ran data-driven social strategy + videography production.",
+      "Ran data-driven social strategy.",
     ],
   },
 ];

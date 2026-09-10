@@ -113,16 +113,19 @@ export function LiveQueryCard() {
 
   return (
     <div
-      className="box-border w-full overflow-hidden font-mono"
+      className="shadow-hard box-border w-full overflow-hidden border-[3px] border-border bg-surface-1 font-mono"
       aria-live="polite"
       aria-label={ariaLabel}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Header row — stays visible during scene transition */}
-      <div className="mb-3 flex items-center gap-2" style={{ color: "var(--text-muted)" }}>
+      {/* Header row — inverted bar, stays visible during scene transition */}
+      <div
+        className="flex items-center gap-2 border-b-[3px] border-border px-2.5 py-1.5"
+        style={{ background: "var(--text)", color: "var(--background)" }}
+      >
         <motion.span
-          className="block h-[6px] w-[6px]"
+          className="block h-[7px] w-[7px]"
           style={{ backgroundColor: "var(--accent)" }}
           animate={reducedMotion ? { opacity: 1 } : { opacity: [1, 0.4, 1] }}
           transition={
@@ -132,7 +135,9 @@ export function LiveQueryCard() {
           }
           aria-hidden
         />
-        <span className="text-[11px] uppercase tracking-[0.18em]">{scene.header} · LIVE QUERY</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em]">
+          {scene.header} · LIVE QUERY
+        </span>
       </div>
 
       {/* Animated scene body */}
@@ -146,25 +151,25 @@ export function LiveQueryCard() {
         >
           {/* SQL block */}
           <pre
-            className="whitespace-pre-wrap text-[12px]"
+            className="whitespace-pre-wrap px-2.5 py-3 text-[11.5px]"
             style={{ minHeight: Math.max(MAX_LINES * LINE_H_PX, 110), lineHeight: "22px" }}
           >
             {tokenizeSQL(scene.query)}
           </pre>
 
-          {/* Bar chart — 1px gaps and a rule under the baseline */}
+          {/* Bar chart — teal bars, accent marks the peak */}
           <div
-            className="mt-4 flex items-end gap-px border-b border-border"
+            className="flex items-end gap-1 border-t-[3px] border-border px-2.5"
             style={{ height: BAR_H_PX }}
             aria-hidden
           >
             {scene.bars.map((bar) => {
               const h = Math.round((bar.value / maxVal) * BAR_H_PX);
-              const bg = bar.highlight ? "var(--accent)" : "var(--border)";
+              const bg = bar.highlight ? "var(--accent)" : "var(--second)";
               return (
                 <motion.div
                   key={`${scene.id}-${bar.label}`}
-                  className="flex-1"
+                  className="flex-1 border-2 border-b-0 border-border"
                   style={{ backgroundColor: bg }}
                   animate={{ height: h }}
                   initial={{ height: 0 }}
@@ -179,12 +184,12 @@ export function LiveQueryCard() {
           </div>
 
           {/* Bar labels */}
-          <div className="mt-1 flex gap-px" aria-hidden>
+          <div className="flex gap-1 border-t-[3px] border-border px-2.5 pt-1.5" aria-hidden>
             {scene.bars.map((bar) => (
               <div
                 key={bar.label}
-                className="flex-1 text-center uppercase"
-                style={{ fontSize: "8px", letterSpacing: "0.10em", color: "var(--text-muted)" }}
+                className="flex-1 text-center font-bold uppercase"
+                style={{ fontSize: "8px", letterSpacing: "0.08em", color: "var(--text-muted)" }}
               >
                 {bar.label}
               </div>
@@ -193,8 +198,8 @@ export function LiveQueryCard() {
 
           {/* Footer */}
           <div
-            className="mt-2 uppercase"
-            style={{ fontSize: "9px", letterSpacing: "0.16em", color: "var(--text-muted)" }}
+            className="px-2.5 pt-1 pb-2.5 font-bold uppercase"
+            style={{ fontSize: "8.5px", letterSpacing: "0.14em", color: "var(--text-muted)" }}
           >
             {scene.footer}
           </div>

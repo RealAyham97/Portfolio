@@ -17,8 +17,8 @@ export function Hero() {
   return (
     <>
       {/* Band 2 — Masthead */}
-      <section id="top" className="u-gutter rule-b pt-[60px] pb-10">
-        <div className="mb-[38px] flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] uppercase tracking-[0.18em] text-text-muted">
+      <section id="top" className="u-gutter rule-b pt-8 pb-7">
+        <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-text-muted">
           <span>Hi, my name is</span>
           <span aria-hidden>·</span>
           <span>{profile.role}</span>
@@ -26,45 +26,40 @@ export function Hero() {
           <span>{profile.location}</span>
         </div>
 
-        <h1 className="t-display-xl anim-rise text-text">
+        <h1 className="t-display-xl text-text">
           {FIRST_NAME}
           <br />
-          <span className="italic text-accent">{LAST_NAME}</span>
+          <span className="text-outline">{LAST_NAME}</span>
         </h1>
       </section>
 
-      {/* Band 3 — Ledger. Descenders on the 172px italic need real clearance,
-          so the ledger's own top padding carries the ≥74px gap. */}
-      <section className="rule-b grid grid-cols-1 lg:grid-cols-[1.35fr_1fr_0.8fr]">
+      {/* Band 3 — Ledger */}
+      <section className="rule-b grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.85fr]">
         {/* Column 1 — pitch, about copy, actions */}
-        <div className="border-b border-border px-5 pt-[38px] pb-[46px] lg:border-b-0 lg:border-r lg:pl-14 lg:pr-12">
+        <div className="border-b-[3px] border-border px-5 py-6 lg:border-b-0 lg:border-r-[3px] lg:pl-10 lg:pr-9 lg:py-7">
           <p className="t-lead text-text">{profile.pitch}</p>
-          <div className="mt-6 max-w-[450px] space-y-4">
+          <div className="mt-5 max-w-[46ch] space-y-3.5">
             {about.paragraphs.map((p) => (
-              <p key={p} className="t-body-l text-text-muted">
+              <p key={p} className="t-body-m text-text-muted">
                 {p}
               </p>
             ))}
           </div>
-          <div className="mt-8 flex flex-col gap-[10px] sm:flex-row sm:gap-3">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <HeroEmailButton />
-            <a
-              href={profile.resumeUrl}
-              download
-              className="inline-flex items-center justify-center border border-border px-[22px] py-[14px] font-mono text-[12px] uppercase tracking-[0.14em] text-text transition hover:bg-surface-2"
-            >
+            <a href={profile.resumeUrl} download className="btn-hard">
               Resume ↓
             </a>
           </div>
         </div>
 
-        {/* Column 2 — live query, de-carded into the ledger */}
-        <div className="border-b border-border px-5 py-[38px] lg:border-b-0 lg:border-r lg:px-12">
+        {/* Column 2 — live query, framed as a hard-edged instrument */}
+        <div className="border-b-[3px] border-border px-5 py-6 lg:border-b-0 lg:border-r-[3px] lg:px-9 lg:py-7">
           <LiveQueryCard />
         </div>
 
         {/* Column 3 — meta ledger, folds About + Numbers in */}
-        <div className="flex flex-col gap-[22px] px-5 py-[38px] lg:pl-12 lg:pr-14">
+        <div className="flex flex-col gap-4 px-5 py-6 lg:pl-9 lg:pr-10 lg:py-7">
           <MetaBlock label="Now" body={about.now} />
           <MetaBlock label="Past" body={about.past.join(" · ")} />
           <MetaBlock label="Industries" body={about.industries.join(" · ")} />
@@ -78,8 +73,8 @@ export function Hero() {
 function MetaBlock({ label, body }: { label: string; body: string }) {
   return (
     <div>
-      <div className="t-mono-label mb-2 text-text-muted">{label}</div>
-      <p className="t-mono-data text-text">{body}</p>
+      <div className="block-second t-mono-label mb-2 inline-block px-2 py-0.5">{label}</div>
+      <p className="t-mono-data text-text-muted">{body}</p>
     </div>
   );
 }
