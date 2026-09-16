@@ -155,9 +155,9 @@ function tokenizeSQL(query: string): ReactNode[] {
 }
 
 const BAR_H_PX = 96;
-const POPOVER_W_PX = 280;
-// Ignore synthetic mouse/focus events fired right after a touch interaction.
-const TOUCH_GRACE_MS = 500;
+// The row below the chart is always populated, so the card opens on the
+// current role rather than on an empty selection.
+const DEFAULT_IDX = JOBS.length - 1;
 
 function fmtMonth(iso: string): string {
   if (iso === "Present") return "Present";
@@ -183,24 +183,21 @@ function fmtMonth(iso: string): string {
 const PULSE_IDX = 3;
 
 export function ItExperienceCard() {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [selectedIdx, setSelectedIdx] = useState(DEFAULT_IDX);
   const [inView, setInView] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [canHover, setCanHover] = useState(true);
   const [interacted, setInteracted] = useState(false);
   const [pulsing, setPulsing] = useState(false);
   const barsRef = useRef<HTMLDivElement>(null);
-  const lastTouchRef = useRef(0);
-  const active = hoveredIdx == null ? null : JOBS[hoveredIdx];
+  const active = JOBS[selectedIdx];
 
   const months = JOBS.map(monthsFor);
   const maxMonths = Math.max(...months);
 
-  const notTouch = () => Date.now() - lastTouchRef.current > TOUCH_GRACE_MS;
-
-  const setHover = (idx: number | null) => {
-    if (idx != null) setInteracted(true);
-    setHoveredIdx(idx);
+  const select = (idx: number) => {
+    setInteracted(true);
+    setSelectedIdx(idx);
   };
 
   // Grow the bars in once the card scrolls into view.
@@ -234,51 +231,41 @@ export function ItExperienceCard() {
     };
   }, [inView, reduceMotion, interacted]);
 
-  // On touch devices, a tap outside the chart dismisses the popover.
-  useEffect(() => {
-    if (hoveredIdx == null) return;
-    const onDocPointerDown = (e: PointerEvent) => {
-      if (e.pointerType === "mouse") return;
-      if (barsRef.current && !barsRef.current.contains(e.target as Node)) {
-        setHoveredIdx(null);
-      }
-    };
-    document.addEventListener("pointerdown", onDocPointerDown);
-    return () => document.removeEventListener("pointerdown", onDocPointerDown);
-  }, [hoveredIdx]);
-
-  const query = active
-    ? `SELECT  company, role, months\nFROM    experience\nWHERE   id = ${active.id};`
-    : "SELECT  company, role, months\nFROM    experience\nORDER BY start ASC;";
-
-  const barCenterPct = hoveredIdx != null ? ((hoveredIdx + 0.5) / JOBS.length) * 100 : 0;
+  // The WHERE clause always names the selected row — the pane below is that
+  // row, so the query and the result stay in step.
+  const query = `SELECT  company, role, months\nFROM    experience\nWHERE   id = ${active.id};`;
 
   return (
     <div
-      className="box-border w-full border border-border bg-surface-1 p-4 font-mono text-xs sm:text-sm"
+      className="shadow-hard box-border w-full border-[3px] border-border bg-surface-1 font-mono"
       aria-live="polite"
     >
       {/* Header */}
-      <div className="mb-3 flex items-center gap-2" style={{ color: "var(--text-muted)" }}>
+      <div
+        className="flex items-center gap-2 border-b-[3px] border-border px-2.5 py-1.5"
+        style={{ background: "var(--text)", color: "var(--background)" }}
+      >
         <span
-          className="block h-[6px] w-[6px]"
+          className="block h-[7px] w-[7px] flex-none"
           style={{
             backgroundColor: "var(--accent)",
             animation: "itCardDot 2s ease-in-out infinite",
           }}
           aria-hidden
         />
-        <span className="uppercase tracking-wider">JOBS_HELD · LIVE QUERY</span>
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em]">
+          JOBS_HELD · LIVE QUERY
+        </span>
       </div>
 
       {/* SQL */}
-      <pre className="whitespace-pre-wrap leading-6" style={{ minHeight: 72, margin: 0 }}>
+      <pre className="m-0 whitespace-pre-wrap px-2.5 pt-2.5 text-[11px] leading-[1.8]">
         {tokenizeSQL(query)}
       </pre>
 
       {/* Interaction hint, styled as a SQL comment; fades after first use */}
       <div
-        className="mt-1"
+        className="px-2.5 pb-2.5 text-[11px]"
         style={{
           color: "var(--text-muted)",
           opacity: interacted ? 0 : 0.8,
@@ -288,55 +275,42 @@ export function ItExperienceCard() {
         {`-- ${canHover ? "hover" : "tap"} a bar to inspect each role`}
       </div>
 
-      {/* Bars + popover anchor */}
-      <div
-        className="relative mt-4"
-        ref={barsRef}
-        onMouseLeave={() => {
-          if (notTouch()) setHover(null);
-        }}
-      >
-        <div className="flex items-end gap-px" style={{ height: BAR_H_PX }}>
+      {/* Chart */}
+      <div ref={barsRef}>
+        <div
+          className="flex items-end gap-1 border-t-[3px] border-border px-2.5"
+          style={{ height: BAR_H_PX }}
+        >
           {JOBS.map((job, idx) => {
             const h = Math.round((months[idx] / maxMonths) * BAR_H_PX);
-            const isActive = idx === hoveredIdx;
+            const isActive = idx === selectedIdx;
             return (
               <button
                 key={job.id}
                 type="button"
-                onMouseEnter={() => {
-                  if (notTouch()) setHover(idx);
-                }}
-                onFocus={() => {
-                  if (notTouch()) setHover(idx);
-                }}
-                onBlur={() => {
-                  if (notTouch()) setHover(null);
-                }}
+                onMouseEnter={() => select(idx)}
+                onFocus={() => select(idx)}
                 onPointerDown={(e) => {
-                  if (e.pointerType !== "mouse") {
-                    lastTouchRef.current = Date.now();
-                    setInteracted(true);
-                    setHoveredIdx((cur) => (cur === idx ? null : idx));
-                  }
+                  if (e.pointerType !== "mouse") select(idx);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    setHover(null);
-                    e.currentTarget.blur();
-                  }
+                  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+                  e.preventDefault();
+                  const dir = e.key === "ArrowRight" ? 1 : -1;
+                  const next = (idx + dir + JOBS.length) % JOBS.length;
+                  select(next);
+                  const sibling = e.currentTarget.parentElement?.children[next];
+                  if (sibling instanceof HTMLElement) sibling.focus();
                 }}
                 aria-label={`${job.company}: ${job.role}, ${months[idx]} months`}
-                aria-expanded={isActive}
-                className="flex-1 h-full flex items-end p-0 bg-transparent border-0 cursor-pointer outline-none"
+                aria-pressed={isActive}
+                className="flex h-full flex-1 cursor-pointer items-end border-0 bg-transparent p-0 outline-none focus-visible:outline-[3px] focus-visible:outline-accent"
               >
                 <span
-                  className="block w-full"
+                  className="block w-full border-2 border-b-0 border-border"
                   style={{
                     height: inView ? h : 0,
-                    backgroundColor: isActive
-                      ? "var(--accent)"
-                      : "color-mix(in oklab, var(--accent) 28%, var(--surface-2))",
+                    backgroundColor: isActive ? "var(--accent)" : "var(--second)",
                     transition: reduceMotion
                       ? "background-color 0.2s ease"
                       : `height 0.7s cubic-bezier(.2,.7,.2,1) ${idx * 90}ms, background-color 0.2s ease`,
@@ -351,93 +325,85 @@ export function ItExperienceCard() {
           })}
         </div>
 
-        {/* Bar labels */}
-        <div className="mt-1 flex gap-px" aria-hidden>
+        {/* Axis labels — the selected one inverts to a filled block, which is
+            what ties the column to the row below without drawing a connector. */}
+        <div className="flex gap-1 border-t-[3px] border-border px-2.5 py-1.5" aria-hidden>
           {JOBS.map((job, idx) => (
             <div
               key={job.id}
-              className="flex-1 text-center uppercase tracking-wider"
-              style={{
-                fontSize: 9,
-                color: idx === hoveredIdx ? "var(--text)" : "var(--text-muted)",
-              }}
+              className="flex-1 overflow-hidden text-ellipsis border-2 px-0.5 py-[3px] text-center text-[8px] font-bold uppercase tracking-[0.06em]"
+              style={
+                idx === selectedIdx
+                  ? {
+                      background: "var(--second)",
+                      color: "var(--second-fg)",
+                      borderColor: "var(--border)",
+                    }
+                  : { borderColor: "transparent", color: "var(--text-muted)" }
+              }
             >
               {job.label}
             </div>
           ))}
         </div>
+      </div>
 
-        {/* Floating popover above the bars */}
-        {active && (
-          <div
-            role="tooltip"
-            className="absolute z-20 border border-border bg-surface-1 p-3 pointer-events-none"
-            style={{
-              width: POPOVER_W_PX,
-              bottom: "calc(100% + 10px)",
-              left: `clamp(0px, calc(${barCenterPct}% - ${POPOVER_W_PX / 2}px), calc(100% - ${POPOVER_W_PX}px))`,
-              boxShadow: "0 12px 32px -8px rgba(0, 0, 0, 0.55), 0 4px 12px -4px rgba(0, 0, 0, 0.4)",
-              animation: reduceMotion ? "none" : "itPopIn 0.18s ease-out",
-              transition: reduceMotion ? "none" : "left 0.25s cubic-bezier(.2,.7,.2,1)",
-            }}
-          >
-            <div className="flex items-baseline justify-between gap-2">
-              <div
-                className="font-display italic"
-                style={{ fontSize: 17, lineHeight: 1.1, color: "var(--text)" }}
-              >
-                {active.company}
-              </div>
-              <div
-                className="uppercase tracking-wider whitespace-nowrap"
-                style={{ fontSize: 9, color: "var(--text-muted)" }}
-              >
-                {months[hoveredIdx as number]} MO
-              </div>
-            </div>
-            <div className="mt-0.5" style={{ fontSize: 10, color: "var(--text-muted)" }}>
-              {active.role} · {active.location}
-            </div>
-            <div
-              className="mt-0.5 uppercase tracking-wider"
-              style={{ fontSize: 9, color: "var(--text-muted)" }}
-            >
-              {fmtMonth(active.start)} - {fmtMonth(active.end)}
-            </div>
+      {/* Result divider */}
+      <div
+        className="flex justify-between gap-2 border-t-[3px] border-border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em]"
+        style={{ background: "var(--background)", color: "var(--text-muted)" }}
+      >
+        <span>1 row returned</span>
+        <span>
+          {selectedIdx + 1} / {JOBS.length}
+        </span>
+      </div>
 
-            <ul
-              className="mt-2 list-none p-0 m-0"
-              style={{ fontSize: 10.5, lineHeight: 1.4, color: "var(--text)" }}
-            >
-              {active.bullets.map((b) => (
-                <li key={b} className="relative pl-3 mb-1">
-                  <span
-                    className="absolute left-0 top-1.5"
-                    style={{ width: 4, height: 1, backgroundColor: "var(--text-muted)" }}
-                  />
-                  {b}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-2 flex flex-wrap gap-1">
-              {active.stack.map((s) => (
-                <span
-                  key={s}
-                  className="uppercase tracking-wider border border-border"
-                  style={{ fontSize: 8.5, padding: "1px 5px", color: "var(--text-muted)" }}
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
+      {/* The returned row — always populated, content swaps on selection */}
+      <div
+        className="border-t-[3px] border-border px-2.5 pt-3 pb-3.5"
+        style={{ background: "var(--background)" }}
+      >
+        <div className="flex items-baseline justify-between gap-2.5">
+          <div className="font-display text-[17px] leading-[1.05] tracking-[-0.02em] text-text">
+            {active.company}
           </div>
-        )}
+          <div className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.1em] text-text-muted">
+            {months[selectedIdx]} MO
+          </div>
+        </div>
+        <div className="mt-0.5 text-[10.5px] leading-[1.7] text-text-muted">
+          {active.role} · {active.location}
+        </div>
+        <div className="mt-px text-[9.5px] font-bold uppercase tracking-[0.12em] text-text-muted">
+          {fmtMonth(active.start)} - {fmtMonth(active.end)}
+        </div>
+
+        <ul className="m-0 mt-2.5 flex list-none flex-col gap-1.5 p-0">
+          {active.bullets.map((b) => (
+            <li key={b} className="flex gap-2 text-[10.5px] leading-[1.55] text-text">
+              <span className="flex-none font-bold text-accent" aria-hidden>
+                –
+              </span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {active.stack.map((s) => (
+            <span
+              key={s}
+              className="border-2 border-border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-text-muted"
+            >
+              {s}
+            </span>
+          ))}
+        </div>
       </div>
 
       <style>{`@keyframes itCardDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-@keyframes itPopIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@keyframes itBarPulse { 0%, 100% { background-color: color-mix(in oklab, var(--accent) 28%, var(--surface-2)); } 50% { background-color: var(--accent); } }`}</style>
+@keyframes itBarPulse { 0%, 100% { background-color: var(--second); } 50% { background-color: var(--accent); } }`}</style>
     </div>
   );
 }

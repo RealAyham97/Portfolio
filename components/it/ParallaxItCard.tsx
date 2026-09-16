@@ -24,21 +24,49 @@ function interp(p: number, stops: Stop[]): number {
 
 const clamp = (x: number, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 
-// Card scales 1.0 → 1.5 along the new ledger path.
-const SCALE_STOPS: Stop[] = [
-  { at: 0.0, v: 1.0 },
-  { at: 1.0, v: 1.5 },
-];
+// The card travels from upper-right down to dead centre.
 const CX_STOPS: Stop[] = [
   { at: 0.0, v: 0.73 },
   { at: 0.5, v: 0.5 },
   { at: 1.0, v: 0.5 },
 ];
 const CY_STOPS: Stop[] = [
-  { at: 0.0, v: 0.34 },
-  { at: 0.5, v: 0.56 },
-  { at: 1.0, v: 0.56 },
+  { at: 0.0, v: 0.32 },
+  { at: 0.5, v: 0.5 },
+  { at: 1.0, v: 0.5 },
 ];
+
+// Ceiling on the zoom, and the breathing room left above and below the card
+// at full zoom. The end scale is derived from the card's own height rather
+// than hardcoded: the card grew when the result row moved inside it, and a
+// fixed 1.5 clipped its bottom edge on a 900px viewport.
+const MAX_SCALE = 1.5;
+const FRAME_GAP_PX = 32;
+// The card starts under-sized so there is vertical slack to travel through.
+// At scale 1 a 566px card already fills most of a laptop viewport, which left
+// the centre pinned and the drop motion flat.
+const START_SCALE = 0.85;
+
+function endScaleFor(cardH: number, viewportH: number) {
+  if (!cardH || !viewportH) return MAX_SCALE;
+  const available = viewportH - FRAME_GAP_PX * 2;
+  return Math.min(MAX_SCALE, Math.max(1, available / cardH));
+}
+
+/**
+ * Keeps the card inside the frame for the whole travel, not just at the end.
+ * The start stop sits high so the card reads as dropping into place, but on a
+ * short viewport that start hangs off the top — so the centre is clamped to
+ * whatever keeps both edges a FRAME_GAP_PX in. When the card cannot fit at
+ * all, dead centre is the least-bad answer.
+ */
+function clampCentreY(cy: number, scaledH: number, viewportH: number) {
+  if (!scaledH || !viewportH) return cy;
+  if (scaledH + FRAME_GAP_PX * 2 > viewportH) return 0.5;
+  const min = (FRAME_GAP_PX + scaledH / 2) / viewportH;
+  const max = (viewportH - FRAME_GAP_PX - scaledH / 2) / viewportH;
+  return Math.min(Math.max(cy, min), max);
+}
 // Title yields the frame to the card as it zooms in.
 const TITLE_OPACITY: Stop[] = [
   { at: 0.0, v: 1.0 },
@@ -64,7 +92,11 @@ type Props = {
 
 export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
   const wrapRef = useRef<HTMLElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
+  // Measured untransformed card height + viewport height, so the zoom can be
+  // capped to whatever actually fits.
+  const [frame, setFrame] = useState({ cardH: 0, viewportH: 0 });
   // The zoom is a desktop, motion-allowed affordance only. Below 1024px (or
   // with reduced motion) the card is shown at rest at full column width.
   // Defaults to on so the desktop majority renders its final structure on the
@@ -83,6 +115,24 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
       motionOk.removeEventListener("change", sync);
     };
   }, []);
+
+  // Measure the card at its natural size (offsetHeight is pre-transform) and
+  // re-measure whenever it or the viewport changes, so the cap stays honest
+  // if the result row reflows.
+  useEffect(() => {
+    if (!zoom) return;
+    const el = cardRef.current;
+    if (!el) return;
+    const measure = () => setFrame({ cardH: el.offsetHeight, viewportH: window.innerHeight });
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [zoom]);
 
   useEffect(() => {
     if (!zoom) return;
@@ -120,9 +170,14 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
     );
   }
 
-  const scale = interp(progress, SCALE_STOPS);
+  const endScale = endScaleFor(frame.cardH, frame.viewportH);
+  const scale = interp(progress, [
+    { at: 0, v: START_SCALE },
+    { at: 1, v: endScale },
+  ]);
   const cxPct = interp(progress, CX_STOPS) * 100;
-  const cyPct = interp(progress, CY_STOPS) * 100;
+  const cyPct =
+    clampCentreY(interp(progress, CY_STOPS), frame.cardH * scale, frame.viewportH) * 100;
   const titleOpacity = interp(progress, TITLE_OPACITY);
 
   return (
@@ -138,6 +193,7 @@ export function ParallaxItCard({ scrollLengthVh = 250 }: Props) {
         </div>
 
         <div
+          ref={cardRef}
           style={{
             position: "absolute",
             left: `${cxPct}%`,
