@@ -28,8 +28,12 @@ const ROWS = [
 
 export function IndexBand() {
   return (
-    <section id="index" aria-label="What are you looking for?">
-      <p className="t-mono-eyebrow u-gutter pt-6 pb-3 text-text-muted">What are you looking for?</p>
+    <section id="index" aria-labelledby="index-heading">
+      {/* A real heading, not a styled paragraph: this band is the page's
+          primary fork and the row titles below it are its subsections. */}
+      <h2 id="index-heading" className="t-mono-eyebrow u-gutter pt-6 pb-3 text-text-muted">
+        What are you looking for?
+      </h2>
 
       {ROWS.map((row) => (
         <Link
@@ -37,12 +41,12 @@ export function IndexBand() {
           href={row.href}
           className="row-hover row-zebra rule-t u-gutter flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6"
         >
-          <span className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3.5">
             <span className="block-accent font-display grid h-[34px] w-[34px] flex-none place-items-center text-[15px]">
               {row.num}
             </span>
-            <span className="t-display-s text-text">{row.label}</span>
-          </span>
+            <h3 className="t-display-s text-text">{row.label}</h3>
+          </div>
           <span className="font-mono text-[10px] font-bold uppercase tracking-[0.1em] text-text-muted lg:whitespace-nowrap">
             {row.tools.join(" · ")} →
           </span>

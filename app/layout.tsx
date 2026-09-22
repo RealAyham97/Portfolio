@@ -1,6 +1,7 @@
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { profile } from "@/content/profile";
+import { services } from "@/content/services";
 import { SITE_URL } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -14,7 +15,7 @@ const GITHUB_URL = "https://github.com/RealAyham97";
 const GA_MEASUREMENT_ID = "G-J417WFYT2Z";
 // Home-page meta description: keyword-relevant, distinct from the hero tagline.
 const HOME_DESCRIPTION =
-  "Freelance full-stack developer and digital marketer in Amman, Jordan. I build websites, Power BI dashboards, and data-driven marketing that delivers measurable results.";
+  "Freelance full-stack developer and digital marketer in Amman, Jordan. Websites, Power BI dashboards, and data-driven marketing with measurable results.";
 
 const sans = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
 const mono = JetBrains_Mono({
@@ -79,6 +80,23 @@ const personJsonLd = {
     occupationLocation: { "@type": "City", name: "Amman" },
     skills:
       "Web development, Power BI dashboards, data analysis, business analysis, SEO, paid advertising",
+  },
+  // Where the work is actually offered, and what is on offer. Deliberately
+  // modelled on Person rather than LocalBusiness/ProfessionalService: there
+  // is no premises customers visit, and LocalBusiness markup without one is a
+  // structured-data guideline risk.
+  areaServed: ["Jordan", "Saudi Arabia", "United Arab Emirates", "MENA", "Worldwide"],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Freelance services",
+    itemListElement: services.map((s) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: s.label.en,
+        url: `${SITE_URL}/services/${s.slug}`,
+      },
+    })),
   },
   sameAs: [profile.socials.linkedin, GITHUB_URL],
 };

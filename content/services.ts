@@ -30,7 +30,7 @@ export const services: Service[] = [
     slug: "dashboards",
     label: { en: "Power BI Dashboards", ar: "لوحات معلومات Power BI" },
     en: {
-      metaTitle: "Freelance Power BI Dashboard Developer & BI Consultant",
+      metaTitle: "Freelance Power BI Dashboard Developer",
       metaDescription:
         "Freelance Power BI dashboards and business intelligence from Amman, Jordan. KPI dashboards, automated reporting, and BI consulting for teams across MENA, remote worldwide.",
       h1: "Power BI Dashboards & Business Intelligence",
@@ -118,7 +118,7 @@ export const services: Service[] = [
     slug: "data-analysis",
     label: { en: "Data & Business Analysis", ar: "تحليل البيانات والأعمال" },
     en: {
-      metaTitle: "Freelance Data Analyst & Business Analyst",
+      metaTitle: "Freelance Data & Business Analyst",
       metaDescription:
         "Freelance data analysis and business analysis from Amman, Jordan. KPI frameworks, ad-hoc analysis, and clear recommendations that turn your numbers into decisions. Remote across MENA.",
       h1: "Data Analysis & Business Analysis",
@@ -206,7 +206,7 @@ export const services: Service[] = [
     slug: "web-development",
     label: { en: "Web Development", ar: "تصميم وبرمجة المواقع" },
     en: {
-      metaTitle: "Freelance Web Developer for Websites & Web Apps",
+      metaTitle: "Freelance Web Developer for Web Apps",
       metaDescription:
         "Freelance web development from Amman, Jordan: fast, SEO-ready websites and web apps built with Next.js and React. Fixed-scope builds for startups and small businesses across MENA.",
       h1: "Website & Web App Development",
@@ -294,7 +294,7 @@ export const services: Service[] = [
     slug: "digital-marketing",
     label: { en: "Digital Marketing & SEO", ar: "التسويق الرقمي و SEO" },
     en: {
-      metaTitle: "Freelance Digital Marketing: SEO, Paid Ads & Analytics",
+      metaTitle: "Freelance Digital Marketing: SEO & Ads",
       metaDescription:
         "Freelance digital marketing from Amman, Jordan: SEO, Google and Meta ads, and analytics that tie every dirham of spend to results. Bilingual Arabic-English campaigns across MENA.",
       h1: "SEO, Paid Ads & Marketing Analytics",

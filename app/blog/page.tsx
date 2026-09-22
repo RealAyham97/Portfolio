@@ -1,8 +1,10 @@
+import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { posts } from "@/content/posts";
-import { pageMeta } from "@/lib/seo";
+import { profile } from "@/content/profile";
+import { SITE_URL, pageMeta } from "@/lib/seo";
 import Link from "next/link";
 
 export const metadata = pageMeta({
@@ -11,6 +13,38 @@ export const metadata = pageMeta({
     "Writing on development, data, and digital marketing, with a focus on the MENA region.",
   path: "/blog",
 });
+
+// The index itself had no structured data — only the individual posts did.
+// Listing the posts here lets the index be understood as a collection rather
+// than an unlabelled page of links.
+const blogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: `${profile.name} — Blog`,
+  description:
+    "Writing on development, data, and digital marketing, with a focus on the MENA region.",
+  url: `${SITE_URL}/blog`,
+  inLanguage: "en",
+  author: { "@type": "Person", name: profile.name, url: SITE_URL },
+  blogPost: posts.map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    url: `${SITE_URL}/blog/${post.slug}`,
+    keywords: post.tags.join(", "),
+    author: { "@type": "Person", name: profile.name, url: SITE_URL },
+  })),
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+  ],
+};
 
 function formatDate(iso: string) {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {
@@ -25,6 +59,8 @@ export default function BlogPage() {
 
   return (
     <>
+      <JsonLd data={blogJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <SiteNav />
       <main>
         <section className="mx-auto max-w-6xl px-6 pt-10 pb-4 md:pb-8">

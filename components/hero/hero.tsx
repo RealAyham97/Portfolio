@@ -25,10 +25,19 @@ export function Hero() {
           Hi, my name is
         </p>
 
+        {/* One h1, whose text is the full role phrase rather than the name
+            alone — the name by itself carried no keywords. The visual split
+            name is aria-hidden so assistive tech reads the phrase once
+            instead of hearing the name twice. */}
         <h1 className="t-display-xl text-text">
-          {FIRST_NAME}
-          <br />
-          <span className="text-outline">{LAST_NAME}</span>
+          <span className="sr-only">
+            {profile.name} — {profile.role}, {profile.location}
+          </span>
+          <span aria-hidden>
+            {FIRST_NAME}
+            <br />
+            <span className="text-outline">{LAST_NAME}</span>
+          </span>
         </h1>
 
         <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-text-muted">
@@ -38,8 +47,16 @@ export function Hero() {
         </div>
       </section>
 
-      {/* Band 3 — Ledger */}
-      <section className="rule-b grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.85fr]">
+      {/* Band 3 — Ledger. The design has no visible section title here, but
+          folding About into this band left the page with no h2 at all, so the
+          heading is present and screen-reader only. */}
+      <section
+        aria-labelledby="about-heading"
+        className="rule-b grid grid-cols-1 lg:grid-cols-[1.3fr_1fr_0.85fr]"
+      >
+        <h2 id="about-heading" className="sr-only">
+          About
+        </h2>
         {/* Column 1 — pitch, about copy, actions */}
         <div className="border-b-[3px] border-border px-5 py-6 lg:border-b-0 lg:border-r-[3px] lg:pl-10 lg:pr-9 lg:py-7">
           <p className="t-lead text-text">{profile.pitch}</p>
@@ -78,7 +95,9 @@ export function Hero() {
 function MetaBlock({ label, body }: { label: string; body: string }) {
   return (
     <div>
-      <div className="block-second t-mono-label mb-2 inline-block px-2 py-0.5">{label}</div>
+      {/* h3 rather than a div: these sit under the ledger's About heading and
+          are the only labelled structure in that column. Styling unchanged. */}
+      <h3 className="block-second t-mono-label mb-2 inline-block px-2 py-0.5">{label}</h3>
       <p className="t-mono-data text-text-muted">{body}</p>
     </div>
   );
