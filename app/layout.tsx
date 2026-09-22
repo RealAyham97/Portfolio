@@ -6,8 +6,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Archivo, Archivo_Black, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 
 const GITHUB_URL = "https://github.com/RealAyham97";
+// GA4 measurement ID. Public by design — it ships to every client in the tag
+// itself — so it lives here rather than in an environment variable.
+const GA_MEASUREMENT_ID = "G-J417WFYT2Z";
 // Home-page meta description: keyword-relevant, distinct from the hero tagline.
 const HOME_DESCRIPTION =
   "Freelance full-stack developer and digital marketer in Amman, Jordan. I build websites, Power BI dashboards, and data-driven marketing that delivers measurable results.";
@@ -95,6 +99,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
+
+        {/* Google tag (gtag.js). In the root layout, so it loads on every
+            route. afterInteractive keeps it off the critical path — it runs
+            once hydration is done rather than blocking first paint. */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
+        </Script>
+
         <Analytics />
         <SpeedInsights />
       </body>
