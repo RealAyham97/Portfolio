@@ -49,20 +49,29 @@ export function SiteNav({ initialTime }: { initialTime?: string }) {
     };
   }, [open]);
 
-  // Watch the header itself rather than a scroll offset, so the burger appears
-  // at exactly the point the real nav leaves the screen.
+  // Measure the header's own position rather than a fixed scroll offset, so
+  // the burger appears at exactly the point the real nav leaves the screen
+  // regardless of how tall the header is.
+  //
+  // A scroll listener rather than an IntersectionObserver on purpose: an
+  // observer created while the document is hidden (a background tab, a
+  // restored page) can miss its initial delivery and leave the burger stuck
+  // off. Reading the rect on scroll always reflects the truth.
   useEffect(() => {
     const el = headerRef.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        setHeaderGone(!entry.isIntersecting);
-        if (entry.isIntersecting) setFloatOpen(false);
-      },
-      { threshold: 0 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+    const check = () => {
+      const gone = el.getBoundingClientRect().bottom <= 0;
+      setHeaderGone(gone);
+      if (!gone) setFloatOpen(false);
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
   }, []);
 
   // Escape and outside-tap close the floating panel. It deliberately does not

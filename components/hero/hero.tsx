@@ -18,19 +18,24 @@ export function Hero() {
     <>
       {/* Band 2 — Masthead */}
       <section id="top" className="u-gutter rule-b pt-8 pb-7">
-        <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-text-muted">
-          <span>Hi, my name is</span>
-          <span aria-hidden>·</span>
-          <span>{profile.role}</span>
-          <span aria-hidden>·</span>
-          <span>{profile.location}</span>
-        </div>
+        {/* Greeting, name, then the credentials — in that order, so the
+            sentence the greeting opens is answered by the name directly
+            below it rather than after the role and location. */}
+        <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-text-muted">
+          Hi, my name is
+        </p>
 
         <h1 className="t-display-xl text-text">
           {FIRST_NAME}
           <br />
           <span className="text-outline">{LAST_NAME}</span>
         </h1>
+
+        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-text-muted">
+          <span>{profile.role}</span>
+          <span aria-hidden>·</span>
+          <span>{profile.location}</span>
+        </div>
       </section>
 
       {/* Band 3 — Ledger */}
