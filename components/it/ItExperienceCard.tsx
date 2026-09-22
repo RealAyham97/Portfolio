@@ -331,7 +331,7 @@ export function ItExperienceCard() {
           {JOBS.map((job, idx) => (
             <div
               key={job.id}
-              className="flex-1 overflow-hidden text-ellipsis border-2 px-0.5 py-[3px] text-center text-[8px] font-bold uppercase tracking-[0.06em]"
+              className="flex-1 overflow-hidden text-ellipsis border-2 px-0.5 py-[3px] text-center text-[9px] font-bold uppercase tracking-[0.06em] lg:text-[8px]"
               style={
                 idx === selectedIdx
                   ? {
@@ -394,7 +394,7 @@ export function ItExperienceCard() {
           {active.stack.map((s) => (
             <span
               key={s}
-              className="border-2 border-border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-text-muted"
+              className="border-2 border-border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] lg:text-[8px] text-text-muted"
             >
               {s}
             </span>

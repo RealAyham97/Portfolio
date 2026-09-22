@@ -51,7 +51,7 @@ export function ContactForm() {
             required
             autoComplete="name"
             placeholder="Your name"
-            className="w-full rounded-xl border border-border bg-surface-1 px-4 py-3 text-sm text-text placeholder:text-text-muted/50 outline-none transition focus:border-accent"
+            className="w-full border-[3px] border-border bg-surface-1 px-4 py-3 text-base text-text placeholder:text-text-muted/50 outline-none transition focus:border-accent lg:text-sm"
           />
         </div>
         <div className="space-y-1.5">
@@ -68,7 +68,7 @@ export function ContactForm() {
             required
             autoComplete="email"
             placeholder="you@example.com"
-            className="w-full rounded-xl border border-border bg-surface-1 px-4 py-3 text-sm text-text placeholder:text-text-muted/50 outline-none transition focus:border-accent"
+            className="w-full border-[3px] border-border bg-surface-1 px-4 py-3 text-base text-text placeholder:text-text-muted/50 outline-none transition focus:border-accent lg:text-sm"
           />
         </div>
       </div>
@@ -86,7 +86,7 @@ export function ContactForm() {
           required
           rows={6}
           placeholder="What's on your mind?"
-          className="w-full resize-none rounded-xl border border-border bg-surface-1 px-4 py-3 text-sm text-text placeholder:text-text-muted/50 outline-none transition focus:border-accent"
+          className="w-full resize-none border-[3px] border-border bg-surface-1 px-4 py-3 text-base text-text placeholder:text-text-muted/50 outline-none transition focus:border-accent lg:text-sm"
         />
       </div>
 
@@ -94,7 +94,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={status === "loading" || status === "success"}
-          className="rounded-full bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-hard is-primary min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === "loading" ? "Sending…" : status === "success" ? "Sent!" : "Send message"}
         </button>

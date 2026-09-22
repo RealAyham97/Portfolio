@@ -188,8 +188,8 @@ export function LiveQueryCard() {
             {scene.bars.map((bar) => (
               <div
                 key={bar.label}
-                className="flex-1 text-center font-bold uppercase"
-                style={{ fontSize: "8px", letterSpacing: "0.08em", color: "var(--text-muted)" }}
+                className="flex-1 text-center text-[10px] font-bold uppercase lg:text-[8px]"
+                style={{ letterSpacing: "0.08em", color: "var(--text-muted)" }}
               >
                 {bar.label}
               </div>
@@ -198,8 +198,8 @@ export function LiveQueryCard() {
 
           {/* Footer */}
           <div
-            className="px-2.5 pt-1 pb-2.5 font-bold uppercase"
-            style={{ fontSize: "8.5px", letterSpacing: "0.14em", color: "var(--text-muted)" }}
+            className="px-2.5 pt-1 pb-2.5 text-[10px] font-bold uppercase lg:text-[8.5px]"
+            style={{ letterSpacing: "0.14em", color: "var(--text-muted)" }}
           >
             {scene.footer}
           </div>
