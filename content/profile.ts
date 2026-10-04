@@ -8,7 +8,7 @@ export const profile = {
   location: "Amman, Jordan",
   timezone: "Asia/Amman" as const,
   pitch: "I spot what's broken, then I build what fixes it.",
-  resumeUrl: "/Aiham AlRawashdeh CV.pdf",
+  resumeUrl: "/Ayham_AlRawashdeh_CV.pdf",
   socials: {
     linkedin: "https://www.linkedin.com/in/ayham-alrawashdeh",
   },
